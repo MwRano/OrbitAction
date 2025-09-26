@@ -1,6 +1,7 @@
 #nullable enable
 using UnityEngine;
 using VContainer;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -9,41 +10,41 @@ public class PlayerController : MonoBehaviour
 {
     private InputSystemActions _inputSystemActions = null!;
     private PlayerParam _playerParam = null!;
-    private PlayerStateMachine _playerStateMachine = null!;
-    private IdleState _idleState = null!;
-    private Rigidbody2D _rb = null!;
     private SpriteRenderer _spriteRenderer = null!;
 
-    private Vector2 _moveInput;
-    private bool _isGrounded;
-
-    public bool IsGrounded => _isGrounded;
+    public Rigidbody2D RigidBody { get; private set; } = null!;
+    public bool IsGrounded { get; private set; }
+    public PlayerStateMachine StateMachine { get; private set; } = null!;
 
     [Inject]
     public void Construct(
         InputSystemActions inputSystemActions,
         PlayerParam playerParam,
-        PlayerStateMachine playerStateMachine,
-        IdleState idleState)
+        PlayerStateMachine playerStateMachine)
     {
         _inputSystemActions = inputSystemActions;
         _playerParam = playerParam;
-        _playerStateMachine = playerStateMachine;
-        _idleState = idleState;
+        StateMachine = playerStateMachine;
 
-        _rb = gameObject.GetComponent<Rigidbody2D>();
+        RigidBody = gameObject.GetComponent<Rigidbody2D>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
-        _playerStateMachine.Initialize(_idleState);
+        StateMachine.Initialize(playerStateMachine.Idle);
+
+        // InputSystemへのメソッド登録
+        _inputSystemActions.Player.Jump.performed += Jump;
+        _inputSystemActions.Player.Enable();
+    }
+
+    void FixedUpdate()
+    {
+        Move();
     }
 
     void Update()
     {
         CheckGrounded();
-        Move();
-        if (_isGrounded) Jump();
-
-        _playerStateMachine.Update();
+        StateMachine.Update();
     }
 
     /// <summary>
@@ -52,16 +53,16 @@ public class PlayerController : MonoBehaviour
     private void CheckGrounded()
     {
         Vector2 groundCheckPosition = (Vector2)transform.position + _playerParam.GroundCheckOffset;
-        _isGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParam.GroundCheckRadius, _playerParam.GroundLayer);
+        IsGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParam.GroundCheckRadius, _playerParam.GroundLayer);
     }
 
     private void Move()
     {
-        _moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
-        _rb.linearVelocity = new Vector2(_moveInput.x * _playerParam.MoveSpeed, _rb.linearVelocity.y);
+        Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
+        RigidBody.linearVelocity = new Vector2(moveInput.x * _playerParam.MoveSpeed, RigidBody.linearVelocity.y);
 
         // 向きに応じてviewの反転                            
-        if (_moveInput.x > 0)
+        if (moveInput.x > 0)
         {
             _spriteRenderer.flipX = false;
         }
@@ -71,10 +72,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Jump()
+    private void Jump(InputAction.CallbackContext context)
     {
-        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0);
-        _rb.AddForce(Vector2.up * _playerParam.JumpForce, ForceMode2D.Impulse);
+        if (!IsGrounded || context.canceled) return;
+
+        RigidBody.linearVelocity = new Vector2(RigidBody.linearVelocity.x, 0);
+        RigidBody.AddForce(Vector2.up * _playerParam.JumpForce, ForceMode2D.Impulse);
     }
 
 
