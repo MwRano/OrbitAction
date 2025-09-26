@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer _spriteRenderer = null!;
 
     public Rigidbody2D RigidBody { get; private set; } = null!;
+    public Animator PlayerAnimator{ get; private set; } = null!;
     public bool IsGrounded { get; private set; }
     public PlayerStateMachine StateMachine { get; private set; } = null!;
 
@@ -26,8 +28,9 @@ public class PlayerController : MonoBehaviour
         _playerParam = playerParam;
         StateMachine = playerStateMachine;
 
-        RigidBody = gameObject.GetComponent<Rigidbody2D>();
-        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        RigidBody = GetComponent<Rigidbody2D>();
+        PlayerAnimator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
         StateMachine.Initialize(playerStateMachine.Idle);
 
