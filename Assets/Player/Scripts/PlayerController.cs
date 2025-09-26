@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private InputSystemActions _inputSystemActions = null!;
-    private PlayerParam _playerParam = null!;
+    private PlayerParam _playerParams = null!;
     private SpriteRenderer _spriteRenderer = null!;
 
     public Rigidbody2D RigidBody { get; private set; } = null!;
@@ -21,11 +21,11 @@ public class PlayerController : MonoBehaviour
     [Inject]
     public void Construct(
         InputSystemActions inputSystemActions,
-        PlayerParam playerParam,
+        PlayerParam playerParams,
         PlayerStateMachine playerStateMachine)
     {
         _inputSystemActions = inputSystemActions;
-        _playerParam = playerParam;
+        _playerParams = playerParams;
         StateMachine = playerStateMachine;
 
         RigidBody = GetComponent<Rigidbody2D>();
@@ -55,14 +55,14 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void CheckGrounded()
     {
-        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParam.GroundCheckOffset;
-        IsGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParam.GroundCheckRadius, _playerParam.GroundLayer);
+        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParams.GroundCheckOffset;
+        IsGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParams.GroundCheckRadius, _playerParams.GroundLayer);
     }
 
     private void Move()
     {
         Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
-        RigidBody.linearVelocity = new Vector2(moveInput.x * _playerParam.MoveSpeed, RigidBody.linearVelocity.y);
+        RigidBody.linearVelocity = new Vector2(moveInput.x * _playerParams.MoveSpeed, RigidBody.linearVelocity.y);
 
         // 向きに応じてviewの反転                            
         if (moveInput.x > 0)
@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
         if (!IsGrounded || context.canceled) return;
 
         RigidBody.linearVelocity = new Vector2(RigidBody.linearVelocity.x, 0);
-        RigidBody.AddForce(Vector2.up * _playerParam.JumpForce, ForceMode2D.Impulse);
+        RigidBody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
     }
 
 
