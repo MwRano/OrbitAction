@@ -2,19 +2,19 @@
 using UnityEngine;
 using VContainer;
 
-public class IdleState : IPlayerState
+public class WalkState : IPlayerState
 {
     private readonly PlayerController _player;
 
     [Inject]
-    public IdleState(PlayerController playerController)
+    public WalkState(PlayerController playerController)
     {
         _player = playerController;
     }
 
     public void Enter()
     {
-
+        _player.PlayerAnimator.SetTrigger(AnimatorParams.WalkHash);
     }
 
     public void Update()
@@ -32,11 +32,11 @@ public class IdleState : IPlayerState
                 _player.StateMachine.TransitionTo(_player.StateMachine.Fall);
             }
         }
-        
-        // Walkへの遷移
-        if (Mathf.Abs(_player.RigidBody.linearVelocityX) > 0.1f)
+
+        // idleへの遷移
+        if (Mathf.Abs(_player.RigidBody.linearVelocityX) <= 0.1f)
         {
-            _player.StateMachine.TransitionTo(_player.StateMachine.Walk);
+            _player.StateMachine.TransitionTo(_player.StateMachine.Idle);
         }
     }
 

@@ -2,19 +2,19 @@
 using UnityEngine;
 using VContainer;
 
-public class FallState : IPlayerState
+public class JumpState : IPlayerState
 {
     private readonly PlayerController _player;
 
     [Inject]
-    public FallState(PlayerController playerController)
+    public JumpState(PlayerController playerController)
     {
         _player = playerController;
     }
 
     public void Enter()
     {
-
+        _player.PlayerAnimator.SetTrigger(AnimatorParams.JumpHash);
     }
 
     public void Update()
@@ -33,10 +33,10 @@ public class FallState : IPlayerState
             }
         }
 
-        // Jumpへの遷移
-        if (_player.RigidBody.linearVelocityY > 0.1f)
+        // Fallへの遷移
+        if (_player.RigidBody.linearVelocityY < -0.1f)
         {
-            _player.StateMachine.TransitionTo(_player.StateMachine.Jump);
+            _player.StateMachine.TransitionTo(_player.StateMachine.Fall);
         }
     }
 
