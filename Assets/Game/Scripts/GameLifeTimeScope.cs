@@ -12,6 +12,9 @@ public class GameLifeTimeScope : LifetimeScope
         // Param
         builder.RegisterInstance(playerParam).AsImplementedInterfaces();
 
+        // Input
+        builder.Register<InputSystemActions>(Lifetime.Scoped);
+
         // Player
         builder.RegisterComponentInHierarchy<PlayerController>();
         builder.Register<PlayerStateMachine>(Lifetime.Scoped);
