@@ -1,6 +1,5 @@
 #nullable enable
 
-using UnityEngine;
 using VContainer;
 
 /// <summary>
@@ -8,7 +7,7 @@ using VContainer;
 /// </summary>
 public class PlayerStateMachine
 {
-    public IPlayerState? CurrentState { get; private set; }
+    private IPlayerState _currentState  = null!;
     public IdleState Idle { get; }
     public WalkState Walk { get; }
     public JumpState Jump { get; }
@@ -29,22 +28,19 @@ public class PlayerStateMachine
 
     public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
     {
-        CurrentState = startingState;
+        _currentState = startingState;
         startingState.Enter(playerContext);
     }
 
     public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
     {
-        CurrentState?.Exit();
-        CurrentState = nextState;
+        _currentState.Exit();
+        _currentState = nextState;
         nextState.Enter(playerContext);
     }
 
     public void Update(IPlayerContext playerContext)
     {
-        if (CurrentState != null)
-        {
-            CurrentState.Update(playerContext, this);
-        }
+        _currentState.Update(playerContext, this);
     }
 }
