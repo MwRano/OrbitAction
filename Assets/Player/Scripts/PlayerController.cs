@@ -5,31 +5,34 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IPlayerContext
 {
     private InputSystemActions _inputSystemActions = null!;
-    private PlayerParam _playerParam = null!;
+    private PlayerParam _playerParams = null!;
     private SpriteRenderer _spriteRenderer = null!;
 
-    public Rigidbody2D RigidBody { get; private set; } = null!;
+    public Rigidbody2D Rigidbody { get; private set; } = null!;
+    public Animator PlayerAnimator{ get; private set; } = null!;
     public bool IsGrounded { get; private set; }
     public PlayerStateMachine StateMachine { get; private set; } = null!;
 
     [Inject]
     public void Construct(
         InputSystemActions inputSystemActions,
-        PlayerParam playerParam,
+        PlayerParam playerParams,
         PlayerStateMachine playerStateMachine)
     {
         _inputSystemActions = inputSystemActions;
-        _playerParam = playerParam;
+        _playerParams = playerParams;
         StateMachine = playerStateMachine;
 
-        RigidBody = gameObject.GetComponent<Rigidbody2D>();
-        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        Rigidbody = GetComponent<Rigidbody2D>();
+        PlayerAnimator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
-        StateMachine.Initialize(playerStateMachine.Idle);
+        StateMachine.Initialize(playerStateMachine.Idle, this);
 
         // InputSystemへのメソッド登録
         _inputSystemActions.Player.Jump.performed += Jump;
@@ -44,7 +47,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckGrounded();
-        StateMachine.Update();
+        StateMachine.Update(this);
     }
 
     /// <summary>
@@ -52,33 +55,38 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void CheckGrounded()
     {
-        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParam.GroundCheckOffset;
-        IsGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParam.GroundCheckRadius, _playerParam.GroundLayer);
+        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParams.GroundCheckOffset;
+        IsGrounded = Physics2D.OverlapCircle(groundCheckPosition, _playerParams.GroundCheckRadius, _playerParams.GroundLayer);
     }
 
     private void Move()
     {
         Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
-        RigidBody.linearVelocity = new Vector2(moveInput.x * _playerParam.MoveSpeed, RigidBody.linearVelocity.y);
+        Rigidbody.linearVelocity = new Vector2(moveInput.x * _playerParams.MoveSpeed, Rigidbody.linearVelocity.y);
 
-        // 向きに応じてviewの反転                            
-        if (moveInput.x > 0)
+        _spriteRenderer.flipX = moveInput.x switch
         {
-            _spriteRenderer.flipX = false;
-        }
-        else
-        {
-            _spriteRenderer.flipX = true;
-        }
+            // 向きに応じてviewの反転                            
+            > 0 => false,
+            < 0 => true,
+            _ => _spriteRenderer.flipX
+        };
     }
 
     private void Jump(InputAction.CallbackContext context)
     {
         if (!IsGrounded || context.canceled) return;
 
-        RigidBody.linearVelocity = new Vector2(RigidBody.linearVelocity.x, 0);
-        RigidBody.AddForce(Vector2.up * _playerParam.JumpForce, ForceMode2D.Impulse);
+        Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
+        Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
     }
 
-
+    void OnDrawGizmos()
+    {
+        if (_playerParams == null) return;
+    
+        Gizmos.color = Color.green;
+        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParams.GroundCheckOffset;
+        Gizmos.DrawWireSphere(groundCheckPosition, _playerParams.GroundCheckRadius);
+    }
 }
