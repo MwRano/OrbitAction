@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerParams
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 10
+  jumpForce: 9
   groundCheckOffset: {x: 0, y: 0}
   groundLayer:
     serializedVersion: 2
