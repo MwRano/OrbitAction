@@ -1,42 +1,33 @@
 #nullable enable
 using UnityEngine;
-using VContainer;
 
 public class FallState : IPlayerState
 {
-    private readonly PlayerController _player;
-
-    [Inject]
-    public FallState(PlayerController playerController)
+    public void Enter(IPlayerContext playerContext)
     {
-        _player = playerController;
+        playerContext.PlayerAnimator.SetTrigger(AnimatorParams.FallHash);
     }
 
-    public void Enter()
+    public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
     {
-        _player.PlayerAnimator.SetTrigger(AnimatorParams.FallHash);
-    }
-
-    public void Update()
-    {
-        if (_player.IsGrounded)
+        if (playerContext.IsGrounded)
         {
             // Walkへの遷移
-            if (Mathf.Abs(_player.RigidBody.linearVelocityX) > 0.1f)
+            if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0.1f)
             {
-                _player.StateMachine.TransitionTo(_player.StateMachine.Walk);
+                stateMachine.TransitionTo(stateMachine.Walk, playerContext);
             }
             // Idleへの遷移
             else
             {
-                _player.StateMachine.TransitionTo(_player.StateMachine.Idle);
+                stateMachine.TransitionTo(stateMachine.Idle, playerContext);
             }
         }
 
         // Jumpへの遷移
-        if (_player.RigidBody.linearVelocityY > 0.1f)
+        if (playerContext.Rigidbody.linearVelocityY > 0.1f)
         {
-            _player.StateMachine.TransitionTo(_player.StateMachine.Jump);
+            stateMachine.TransitionTo(stateMachine.Jump, playerContext);
         }
     }
 

@@ -1,5 +1,6 @@
 #nullable enable
 
+using UnityEngine;
 using VContainer;
 
 /// <summary>
@@ -26,24 +27,24 @@ public class PlayerStateMachine
         Fall = fallState;
     }
 
-    public void Initialize(IPlayerState startingState)
+    public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
     {
         CurrentState = startingState;
-        startingState.Enter();
+        startingState.Enter(playerContext);
     }
 
-    public void TransitionTo(IPlayerState nextState)
+    public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
     {
         CurrentState?.Exit();
         CurrentState = nextState;
-        nextState.Enter();
+        nextState.Enter(playerContext);
     }
 
-    public void Update()
+    public void Update(IPlayerContext playerContext)
     {
         if (CurrentState != null)
         {
-            CurrentState.Update();
+            CurrentState.Update(playerContext, this);
         }
     }
 }
