@@ -32,6 +32,9 @@
 *.DotSettings.user
 .idea/
 
+# Visual Studio Code
+.vscode/
+
 # Visual Studio cache directory
 .vs/
 
