@@ -10,6 +10,8 @@ using LitMotion.Extensions;
 public class PlanetController : MonoBehaviour
 {
     private PlayerController _player = null!;
+    private float _smoothTime;
+    private float _maxSpeed;
     private Vector2 _currentVelocity;
     
     private MotionHandle _floatingMotion;
@@ -19,11 +21,14 @@ public class PlanetController : MonoBehaviour
     public void Construct(PlayerController playerController, PlanetParams planetParams)
     {
         _player = playerController;
+        _smoothTime = planetParams.SmoothTime;
+        _maxSpeed = planetParams.MaxSpeed;
     }
     
     private void Update()
     {
         ControlFloatingMotion();
+        ControlFollowingMotion();
     }
     
     /// <summary>
@@ -51,5 +56,29 @@ public class PlanetController : MonoBehaviour
                 .WithLoops(-1, LoopType.Yoyo)
                 .BindToPositionY(transform)
                 .AddTo(transform);
+    }
+    
+    /// <summary>
+    /// 追従モーションの制御
+    /// </summary>
+    private void ControlFollowingMotion()
+    {
+        Vector2 playerPos = _player.transform.position;
+        Vector2 targetPosition = _player.IsFacingRight
+            ? new Vector2(playerPos.x - 1, playerPos.y + 1)
+            : new Vector2(playerPos.x + 1, playerPos.y + 1);
+        
+        if(!_isFloating) FollowTarget(targetPosition);
+    }
+    
+    private void FollowTarget(Vector2 targetPosition)
+    {
+        transform.position = Vector2.SmoothDamp(
+            transform.position,
+            targetPosition,
+            ref _currentVelocity,
+            _smoothTime,
+            _maxSpeed
+        );
     }
 }
