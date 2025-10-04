@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     public Animator PlayerAnimator{ get; private set; } = null!;
     public bool IsGrounded { get; private set; }
     public PlayerStateMachine StateMachine { get; private set; } = null!;
+    public bool IsFacingRight { get; private set; }
 
     [Inject]
     public void Construct(
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         // InputSystemへのメソッド登録
         _inputSystemActions.Player.Jump.performed += Jump;
         _inputSystemActions.Player.Enable();
+        IsFacingRight = _spriteRenderer.flipX;
     }
 
     void FixedUpdate()
@@ -71,6 +73,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
             < 0 => true,
             _ => _spriteRenderer.flipX
         };
+        IsFacingRight = !_spriteRenderer.flipX;
     }
 
     private void Jump(InputAction.CallbackContext context)

@@ -6,11 +6,13 @@ using VContainer.Unity;
 public class GameLifeTimeScope : LifetimeScope
 {
     [SerializeField] PlayerParam playerParam = null!;
+    [SerializeField] PlanetParams planetParams = null!;
 
     protected override void Configure(IContainerBuilder builder)
     {
         // Param
         builder.RegisterInstance(playerParam).AsImplementedInterfaces();
+        builder.RegisterInstance(planetParams).AsImplementedInterfaces();
 
         // Input
         builder.Register<InputSystemActions>(Lifetime.Scoped);
@@ -22,6 +24,9 @@ public class GameLifeTimeScope : LifetimeScope
         builder.Register<WalkState>(Lifetime.Scoped);
         builder.Register<JumpState>(Lifetime.Scoped);
         builder.Register<FallState>(Lifetime.Scoped);
+        
+        // Planet
+        builder.RegisterComponentInHierarchy<PlanetController>();
     
     }
 }
