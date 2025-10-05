@@ -1,10 +1,17 @@
 ﻿#nullable enable
 using LitMotion;
 using LitMotion.Extensions;
+using VContainer;
 
 public class HoverState : IPlanetState
 {
-    MotionHandle _floatingMotion;
+    private MotionHandle _floatingMotion;
+    private readonly IPlayerContext _player;
+    [Inject]
+    public HoverState(IPlayerContext player)
+    {
+        _player = player;
+    }
     public void Enter(IPlanetContext planet)
     {
         _floatingMotion = LMotion.Create(planet.PlanetTransform.position.y, planet.PlanetTransform.position.y - 0.2f, 1f)
@@ -16,7 +23,15 @@ public class HoverState : IPlanetState
 
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
     {
-        
+        // 状態遷移の判定
+        if(_player.CurrentVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移
+        {
+            stateMachine.TransitionTo(stateMachine.Follow, planet);
+        }
+        else if(planet.IsLaunched) 
+        {
+            stateMachine.TransitionTo(stateMachine.Travel, planet);
+        }
     }
 
     public void Exit()
