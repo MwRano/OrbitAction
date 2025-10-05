@@ -1,14 +1,17 @@
 ﻿#nullable enable
 using UnityEngine;
 using VContainer;
+using LitMotion;
+using LitMotion.Extensions;
 
 public class FollowState :IPlanetState
 {
-    private IPlayerContext _player;
+    private readonly IPlayerContext _player;
+    private readonly float _smoothTime;
+    private readonly float _maxSpeed;
+    private MotionHandle _rotationMotion;
     private Vector2 _currentVelocity;
-    private float _smoothTime;
-    private float _maxSpeed;
-
+    
     [Inject]
     public FollowState(IPlayerContext player, PlanetParams planetParams)
     {
@@ -19,7 +22,13 @@ public class FollowState :IPlanetState
     
     public void Enter(IPlanetContext planet)
     {
+        if(_rotationMotion.IsActive()) return;
         
+        _rotationMotion = LMotion.Create(0f, 360f, 30f)
+            .WithEase(Ease.Linear)
+            .WithLoops(-1)
+            .BindToLocalEulerAnglesZ(planet.PlanetTransform)
+            .AddTo(planet.PlanetTransform);
     }
 
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
