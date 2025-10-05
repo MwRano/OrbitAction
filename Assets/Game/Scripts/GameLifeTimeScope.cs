@@ -18,7 +18,7 @@ public class GameLifeTimeScope : LifetimeScope
         builder.Register<InputSystemActions>(Lifetime.Scoped);
 
         // Player
-        builder.RegisterComponentInHierarchy<PlayerController>();
+        builder.RegisterComponentInHierarchy<PlayerController>().As<IPlayerContext>().AsSelf();
         builder.Register<PlayerStateMachine>(Lifetime.Scoped);
         builder.Register<IdleState>(Lifetime.Scoped);
         builder.Register<WalkState>(Lifetime.Scoped);
@@ -26,7 +26,12 @@ public class GameLifeTimeScope : LifetimeScope
         builder.Register<FallState>(Lifetime.Scoped);
         
         // Planet
-        builder.RegisterComponentInHierarchy<PlanetController>();
-    
+        builder.RegisterComponentInHierarchy<PlanetController>().As<IPlanetContext>().AsSelf();
+        builder.Register<PlanetStateMachine>(Lifetime.Scoped);
+        builder.Register<HoverState>(Lifetime.Scoped);
+        builder.Register<FollowState>(Lifetime.Scoped);
+        builder.Register<TravelState>(Lifetime.Scoped);
+        builder.Register<DeployState>(Lifetime.Scoped);
+
     }
 }
