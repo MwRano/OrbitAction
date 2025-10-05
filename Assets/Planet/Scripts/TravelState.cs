@@ -16,8 +16,10 @@ public class TravelState : IPlanetState
         _player = player;
         _launchDistance = planetParams.LaunchDistance;
     }
+    
     public void Enter(IPlanetContext planet)
     {
+        // 移動モーション 
         Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)planet.PlanetTransform.position;
         LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.5f)
             .WithEase(Ease.OutCubic)
