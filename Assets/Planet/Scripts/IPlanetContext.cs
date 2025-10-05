@@ -1,5 +1,6 @@
-﻿public interface IPlanetContext
+﻿using UnityEngine;
+public interface IPlanetContext
 {
-    PlayerController Player { get; }
+    Transform PlanetTransform { get; }
     bool IsLaunched { get; }
 }
