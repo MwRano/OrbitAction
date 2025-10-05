@@ -7,11 +7,13 @@ public class HoverState : IPlanetState
 {
     private MotionHandle _floatingMotion;
     private readonly IPlayerContext _player;
+    
     [Inject]
     public HoverState(IPlayerContext player)
     {
         _player = player;
     }
+    
     public void Enter(IPlanetContext planet)
     {
         _floatingMotion = LMotion.Create(planet.PlanetTransform.position.y, planet.PlanetTransform.position.y - 0.2f, 1f)
