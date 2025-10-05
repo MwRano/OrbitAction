@@ -19,6 +19,10 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     public PlayerStateMachine StateMachine { get; private set; } = null!;
     public bool IsFacingRight { get; private set; }
     public Vector2 LookingDirection { get; private set; }
+    public Vector2 CurrentPosition { get; private set; } 
+    public Vector2 CurrentVelocity { get; private set; }
+    
+    
 
     [Inject]
     public void Construct(
@@ -50,6 +54,8 @@ public class PlayerController : MonoBehaviour, IPlayerContext
 
     void Update()
     {
+        CurrentPosition = transform.position;
+        CurrentVelocity = Rigidbody.linearVelocity;
         CheckGrounded();
         StateMachine.Update(this);
     }
