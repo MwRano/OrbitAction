@@ -8,6 +8,7 @@ public class DeployState : IPlanetState
     
     public void Enter(IPlanetContext planet)
     {
+        // 浮遊モーション
         _floatingMotion = LMotion.Create(planet.PlanetTransform.position.y, planet.PlanetTransform.position.y - 0.2f, 1f)
             .WithEase(Ease.InOutSine)
             .WithLoops(-1, LoopType.Yoyo)
