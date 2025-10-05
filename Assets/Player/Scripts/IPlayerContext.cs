@@ -5,4 +5,9 @@ public interface IPlayerContext
     Rigidbody2D Rigidbody { get; }
     Animator PlayerAnimator { get; }
     bool IsGrounded { get; }
+    
+    Vector2 CurrentPosition { get; }
+    Vector2 CurrentVelocity { get; }
+    bool IsFacingRight { get; }
+    
 }
