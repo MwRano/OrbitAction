@@ -620,6 +620,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   playerParam: {fileID: 11400000, guid: 8be3270932f76d04c83e205b05611267, type: 2}
+  planetParams: {fileID: 11400000, guid: 2ccaf38cf9806f647a90f20f4031024c, type: 2}
 --- !u!4 &890402250
 Transform:
   m_ObjectHideFlags: 0
