@@ -36,6 +36,16 @@ public class FollowState :IPlanetState
             _smoothTime,
             _maxSpeed
         );
+        
+        // 状態遷移の判定
+        if(_player.CurrentVelocity.sqrMagnitude < 0.01f && _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
+        {
+            stateMachine.TransitionTo(stateMachine.Hover, planet);
+        }
+        else if(planet.IsLaunched)
+        {
+            stateMachine.TransitionTo(stateMachine.Travel, planet);
+        }
     }
 
     public void Exit()
