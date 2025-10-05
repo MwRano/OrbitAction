@@ -9,5 +9,6 @@ public interface IPlayerContext
     Vector2 CurrentPosition { get; }
     Vector2 CurrentVelocity { get; }
     bool IsFacingRight { get; }
+    Vector2 LookingDirection { get; }
     
 }
