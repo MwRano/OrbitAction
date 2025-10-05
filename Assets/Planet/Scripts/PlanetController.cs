@@ -24,11 +24,25 @@ public class PlanetController : MonoBehaviour
         _smoothTime = planetParams.SmoothTime;
         _maxSpeed = planetParams.MaxSpeed;
     }
+
+    private void Awake()
+    {
+        StartRotationMotion();
+    }
     
     private void Update()
     {
         ControlFloatingMotion();
         ControlFollowingMotion();
+    }
+
+    private MotionHandle StartRotationMotion()
+    {
+        return LMotion.Create(0f, 360f, 30f)
+            .WithEase(Ease.Linear)
+            .WithLoops(-1, LoopType.Restart)
+            .BindToLocalEulerAnglesZ(transform)
+            .AddTo(transform);
     }
     
     /// <summary>
