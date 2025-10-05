@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     public bool IsGrounded { get; private set; }
     public PlayerStateMachine StateMachine { get; private set; } = null!;
     public bool IsFacingRight { get; private set; }
+    public Vector2 LookingDirection { get; private set; }
 
     [Inject]
     public void Construct(
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     void FixedUpdate()
     {
         Move();
+        Look();
     }
 
     void Update()
@@ -74,6 +76,12 @@ public class PlayerController : MonoBehaviour, IPlayerContext
             _ => _spriteRenderer.flipX
         };
         IsFacingRight = !_spriteRenderer.flipX;
+    }
+
+    private void Look()
+    {
+        Vector2 lookInput = _inputSystemActions.Player.Look.ReadValue<Vector2>();
+        if(lookInput.sqrMagnitude > 0.1f) LookingDirection = lookInput.normalized;
     }
 
     private void Jump(InputAction.CallbackContext context)
