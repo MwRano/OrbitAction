@@ -990,6 +990,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Planet",
+            "id": "9207d096-ba08-4943-b25d-8896b4ecaa1a",
+            "actions": [
+                {
+                    "name": "Attract",
+                    "type": "Button",
+                    "id": "e51c1a58-9971-4cc1-9bb0-e1976ed015aa",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bd9f0c2c-079c-4378-a2a6-a2a8aa9311e6",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "21f25958-f734-47f3-bd76-49e6ef815b87",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
