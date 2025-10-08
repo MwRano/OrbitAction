@@ -100,15 +100,6 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
         Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
     }
-
-    void OnDrawGizmos()
-    {
-        if (_playerParams == null) return;
-    
-        Gizmos.color = Color.green;
-        Vector2 groundCheckPosition = (Vector2)transform.position + _playerParams.GroundCheckOffset;
-        Gizmos.DrawWireSphere(groundCheckPosition, _playerParams.GroundCheckRadius);
-    }
     
     /// <summary>
     /// playerの操作が可能かどうかを設定するメソッド
