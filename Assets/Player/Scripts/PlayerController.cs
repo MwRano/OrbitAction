@@ -13,18 +13,16 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     private PlayerParam _playerParams = null!;
     private SpriteRenderer _spriteRenderer = null!;
     private bool _canControl = true;
+    private PlayerStateMachine _stateMachine = null!;
 
     public Rigidbody2D Rigidbody { get; private set; } = null!;
     public Animator PlayerAnimator{ get; private set; } = null!;
     public bool IsGrounded { get; private set; }
-    public PlayerStateMachine StateMachine { get; private set; } = null!;
     public bool IsFacingRight { get; private set; }
     public Vector2 LookingDirection { get; private set; }
     public Vector2 CurrentPosition { get; private set; } 
     public Vector2 CurrentVelocity { get; private set; }
-
-
-
+    
     [Inject]
     public void Construct(
         InputSystemActions inputSystemActions,
@@ -33,7 +31,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     {
         _inputSystemActions = inputSystemActions;
         _playerParams = playerParams;
-        StateMachine = playerStateMachine;
+        _stateMachine = playerStateMachine;
 
         // コンポーネントの取得
         Rigidbody = GetComponent<Rigidbody2D>();
@@ -46,7 +44,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         IsFacingRight = _spriteRenderer.flipX;
         
         // SMの初期化
-        StateMachine.Initialize(playerStateMachine.Idle, this);
+        _stateMachine.Initialize(playerStateMachine.Idle, this);
     }
 
     void FixedUpdate()
@@ -60,7 +58,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         CurrentPosition = transform.position;
         CurrentVelocity = Rigidbody.linearVelocity;
         CheckGrounded();
-        StateMachine.Update(this);
+        _stateMachine.Update(this);
     }
 
     /// <summary>
