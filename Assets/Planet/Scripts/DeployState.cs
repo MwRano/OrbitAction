@@ -11,21 +11,24 @@ using R3;
 /// </summary>
 public class DeployState : IPlanetState
 {
-    private GameObject _attractionAreaView = null!;
-    private SpriteRenderer _attractionAreaSpriteRenderer = null!;
-    private MotionHandle _floatingMotion;
-    private bool _canAttract;
-    private readonly IPlayerContext _player;
     private readonly Collider2D[] _hitCollidersCache = new Collider2D[20];
     private readonly PlanetParams _planetParams;
-    
+    private readonly IPlayerContext _player;
+    private SpriteRenderer _attractionAreaSpriteRenderer = null!;
+    private GameObject _attractionAreaView = null!;
+    private bool _canAttract;
+    private bool _canOrbit;
+    private MotionHandle _floatingMotion;
+    private SpriteRenderer _orbitAreaSpriteRenderer = null!;
+    private GameObject _orbitAreaView = null!;
+
     [Inject]
     public DeployState(PlanetParams planetParams, PlayerController player)
     {
         _player = player;
-        _planetParams  = planetParams;
+        _planetParams = planetParams;
     }
-    
+
     public void Enter(IPlanetContext planet)
     {
         // 浮遊モーション
@@ -39,15 +42,17 @@ public class DeployState : IPlanetState
         // 引力範囲表示
         _attractionAreaView = planet.AttractionAreaView;
         _attractionAreaSpriteRenderer = planet.AttractionAreaSpriteRenderer;
-        float baseRadius = _attractionAreaSpriteRenderer.sprite.bounds.extents.x;
-        if (baseRadius > 0)
-        {
-            _attractionAreaView.transform.localScale = Vector2.one * (_planetParams.AttractionRange / baseRadius);
-        }
-        _attractionAreaView.SetActive(true);
-        
+        InitSkill(_attractionAreaView, _attractionAreaSpriteRenderer, _planetParams.AttractionRange);
+
+        // 公転範囲表示
+        _orbitAreaView = planet.OrbitAreaView;
+        _orbitAreaSpriteRenderer = planet.OrbitAreaSpriteRenderer;
+        InitSkill(_orbitAreaView, _orbitAreaSpriteRenderer, _planetParams.OrbitalRange);
+
         // 初期状態は引きつけ可能
         _canAttract = true;
+
+        _canOrbit = true;
     }
 
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
@@ -63,17 +68,34 @@ public class DeployState : IPlanetState
     }
 
     /// <summary>
+    /// skillの設定初期化
+    /// </summary>
+    /// <param name="view"></param>
+    /// <param name="spriteRenderer"></param>
+    /// <param name="range"></param>
+    private void InitSkill(GameObject view, SpriteRenderer spriteRenderer, float range)
+    {
+        float baseRadius = spriteRenderer.sprite.bounds.extents.x;
+        if (baseRadius > 0)
+        {
+            view.transform.localScale = Vector2.one * (range / baseRadius);
+        }
+
+        view.SetActive(true);
+    }
+
+    /// <summary>
     /// 引きつけ
     /// </summary>
     public void Attract(Vector2 planetPosition)
     {
-        if(!_canAttract) return;
-        
+        if (!_canAttract) return;
+
         // contactFilterを設定
         ContactFilter2D filter = new ContactFilter2D();
-        filter.SetLayerMask(LayerMask.GetMask("Player")); 
-        filter.useTriggers = false;      
-        
+        filter.SetLayerMask(LayerMask.GetMask("Player"));
+        filter.useTriggers = false;
+
         // 引きつけ範囲内にPlayerがいるか判定
         int size = Physics2D.OverlapCircle(planetPosition, _planetParams.AttractionRange, filter, _hitCollidersCache);
         if (size == 1)
@@ -85,7 +107,7 @@ public class DeployState : IPlanetState
             playerRigidbody.AddForce(direction.normalized * _planetParams.AttractionForce, ForceMode2D.Impulse);
             _canAttract = false;
             _attractionAreaView.SetActive(false);
-            
+
             // delayしてから操作可能にする
             Observable.Timer(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _player.SetCanControl(true));
