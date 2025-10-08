@@ -8,11 +8,16 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlanetController : MonoBehaviour, IPlanetContext
 {
-    public Transform PlanetTransform { get; private set; } = null!;
-    public bool IsLaunched { get; private set; }
+    [SerializeField] private GameObject attractionAreaView = null!;
+    
     private InputSystemActions _inputSystemActions = null!;
     private PlanetStateMachine _stateMachine = null!;
-    
+
+    public Transform PlanetTransform { get; private set; } = null!;
+    public bool IsLaunched { get; private set; }
+    public SpriteRenderer AttractionAreaSpriteRenderer { get; private set; } = null!;
+    public GameObject AttractionAreaView => attractionAreaView;
+
     [Inject]
     public void Construct(
         InputSystemActions inputSystemActions,
@@ -21,15 +26,17 @@ public class PlanetController : MonoBehaviour, IPlanetContext
         _inputSystemActions = inputSystemActions;
         _stateMachine = stateMachine;
     }
-
+    
     private void Awake()
     {
         // InputSystemへのメソッド登録
-        _inputSystemActions.Player.Launch.performed += OnLaunch;
-        _inputSystemActions.Player.Enable();
-        
+        _inputSystemActions.Planet.Launch.performed += OnLaunch;
+        _inputSystemActions.Planet.Attract.performed += OnAttract;
+        _inputSystemActions.Planet.Enable();
+
         PlanetTransform = transform;
         IsLaunched = false;
+        AttractionAreaSpriteRenderer = attractionAreaView.GetComponent<SpriteRenderer>();
         _stateMachine.Initialize(_stateMachine.Follow, this);
     }
 
@@ -37,9 +44,18 @@ public class PlanetController : MonoBehaviour, IPlanetContext
     {
         _stateMachine.Update(this);
     }
-    
+
     private void OnLaunch(InputAction.CallbackContext context)
     {
         IsLaunched ^= true;
+    }
+    
+    private void OnAttract(InputAction.CallbackContext context)
+    {
+        // DeployStateのときのみAttractを実行
+        if (_stateMachine.CurrentState is DeployState deployState)
+        {
+            deployState.Attract(PlanetTransform.position);
+        }
     }
 }
