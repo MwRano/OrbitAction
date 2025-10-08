@@ -1,15 +1,17 @@
 ﻿#nullable enable
 using VContainer;
 
+/// <summary>
+/// planetの状態を管理するクラス
+/// </summary>
 public class PlanetStateMachine
 {
-    private IPlanetState _currentState = null!;
-    
+    public IPlanetState CurrentState { get; private set; } = null!;
     public HoverState Hover { get; }
     public FollowState Follow { get; }
     public TravelState Travel { get; }
     public DeployState Deploy { get; }
-
+    
     [Inject]
     public PlanetStateMachine(
         HoverState hoverState,
@@ -25,19 +27,19 @@ public class PlanetStateMachine
 
     public void Initialize(IPlanetState startingState, IPlanetContext planet)
     {
-        _currentState = startingState;
+        CurrentState = startingState;
         startingState.Enter(planet);
     }
 
     public void TransitionTo(IPlanetState nextState, IPlanetContext planet)
     {
-        _currentState.Exit();
-        _currentState = nextState;
+        CurrentState.Exit();
+        CurrentState = nextState;
         nextState.Enter(planet);
     }
 
     public void Update(IPlanetContext planet)
     {
-        _currentState.Update(planet, this);
+        CurrentState.Update(planet, this);
     }
 }
