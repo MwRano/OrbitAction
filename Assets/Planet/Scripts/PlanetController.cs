@@ -13,12 +13,15 @@ public class PlanetController : MonoBehaviour, IPlanetContext
 
     private InputSystemActions _inputSystemActions = null!;
     private PlanetStateMachine _stateMachine = null!;
+    public bool IsOrbiting { get; private set; }
 
     private void Awake()
     {
         // InputSystemへのメソッド登録
         _inputSystemActions.Planet.Launch.performed += OnLaunch;
         _inputSystemActions.Planet.Attract.performed += OnAttract;
+        _inputSystemActions.Planet.Orbit.performed += _ => IsOrbiting = true;
+        _inputSystemActions.Planet.Orbit.canceled += _ => IsOrbiting = false;
         _inputSystemActions.Planet.Enable();
 
         PlanetTransform = transform;
@@ -39,7 +42,6 @@ public class PlanetController : MonoBehaviour, IPlanetContext
     public SpriteRenderer OrbitAreaSpriteRenderer { get; private set; } = null!;
     public GameObject AttractionAreaView => attractionAreaView;
     public GameObject OrbitAreaView => orbitAreaView;
-
 
     [Inject]
     public void Construct(
