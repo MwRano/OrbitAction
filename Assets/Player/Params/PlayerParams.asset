@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0aa9d0db484a4744a5e80071e620b65, type: 3}
   m_Name: PlayerParams
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 7
   jumpForce: 9
   groundCheckOffset: {x: 0, y: 0}
   groundLayer:
