@@ -11,6 +11,7 @@ using R3;
 /// </summary>
 public class DeployState : IPlanetState
 {
+    private readonly CompositeMotionHandle _handles = new();
     private readonly Collider2D[] _hitCollidersCache = new Collider2D[20];
     private readonly PlanetParams _planetParams;
     private readonly IPlayerContext _player;
@@ -65,6 +66,7 @@ public class DeployState : IPlanetState
     {
         _floatingMotion.Cancel();
         _attractionAreaView.SetActive(false);
+        _orbitAreaView.SetActive(false);
     }
 
     /// <summary>
@@ -116,5 +118,86 @@ public class DeployState : IPlanetState
         {
             Debug.LogWarning("指定したレイヤーのオブジェクトはPlayerのみです。オブジェクトのレイヤー設定を確認してください");
         }
+    }
+
+    public void Orbit(Vector2 planetPosition, bool isOrbiting)
+    {
+        if (!isOrbiting)
+        {
+            _handles.Cancel();
+            _player.SetCanControl(true);
+            return;
+        }
+
+        // contactFilterを設定
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask("Player"));
+        filter.useTriggers = false;
+
+        _player.SetCanControl(false); // 一時的に操作不可にする
+        int size = Physics2D.OverlapCircle(planetPosition, _planetParams.OrbitalRange, filter, _hitCollidersCache);
+        for (int i = 0; i < size; i++)
+        {
+            var hitObject = _hitCollidersCache[i].gameObject;
+            Rigidbody2D rb = hitObject.GetComponent<Rigidbody2D>();
+            if (rb == null) continue;
+
+            float speed = (2f * Mathf.PI * _planetParams.OrbitalRange) / _planetParams.OrbitalPeriod;
+            float correctionFactor = 5f;
+
+            float distToPlanet = Vector2.Distance(rb.position, planetPosition);
+            Vector2 direction = rb.position - planetPosition;
+
+            // 角度計算をメソッド化
+            float baseAngleRad = GetAngleRad(direction);
+
+            // 回転方向判定をメソッド化
+            bool isClockwise = IsClockwise(rb, planetPosition);
+
+            float startAngle = isClockwise ? 360f : 0f;
+            float endAngle = isClockwise ? 0f : 360f;
+
+            LMotion.Create(startAngle, endAngle, _planetParams.OrbitalPeriod)
+                .WithLoops(-1)
+                .WithEase(Ease.Linear)
+                .Bind(angle =>
+                {
+                    if (rb == null) return;
+
+                    float radian = angle * Mathf.Deg2Rad + baseAngleRad;
+
+                    // 理想座標
+                    Vector2 desiredPosition = planetPosition + new Vector2(
+                        distToPlanet * Mathf.Cos(radian),
+                        distToPlanet * Mathf.Sin(radian)
+                    );
+
+                    // 接線速度
+                    Vector2 tangentDirection = new Vector2(-Mathf.Sin(radian), Mathf.Cos(radian));
+                    Vector2 tangentialVelocity = tangentDirection * speed;
+
+                    // 補正速度
+                    Vector2 toDesiredPosition = desiredPosition - rb.position;
+                    Vector2 correctionVelocity = toDesiredPosition * correctionFactor;
+
+                    // 合成速度
+                    rb.linearVelocity = tangentialVelocity + correctionVelocity;
+                })
+                .AddTo(_handles);
+        }
+    }
+
+    // 方向ベクトルから角度(ラジアン)を取得
+    private static float GetAngleRad(Vector2 direction)
+    {
+        return Mathf.Atan2(direction.y, direction.x);
+    }
+
+    // プレイヤーの現在位置・速度から回転方向を判定
+    private static bool IsClockwise(Rigidbody2D rb, Vector2 planetPosition)
+    {
+        bool isPlayerUp = rb.linearVelocity.y > 0;
+        bool isPlayerPlusX = rb.position.x - planetPosition.x > 0;
+        return isPlayerUp ^ isPlayerPlusX;
     }
 }
