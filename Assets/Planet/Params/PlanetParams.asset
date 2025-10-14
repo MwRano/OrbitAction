@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PlanetParams
   m_EditorClassIdentifier: 
   smoothTime: 0.5
-  maxSpeed: 5
+  maxSpeed: 10
   launchDistance: 5
   attractionForce: 10
   attractionRange: 5
-  orbitalPeriod: 3
+  orbitalPeriod: 1
   orbitalRange: 3

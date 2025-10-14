@@ -1023,6 +1023,15 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Orbit"",
+                    ""type"": ""Button"",
+                    ""id"": ""47e97b85-e693-48d2-a666-fc1d410cd3a8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1067,6 +1076,28 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Launch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8aaf35bc-c70d-4759-987a-a1c667710413"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Orbit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""908696a5-f5d8-44ab-98b7-a1a1799e88f3"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Orbit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1162,6 +1193,7 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         m_Planet = asset.FindActionMap("Planet", throwIfNotFound: true);
         m_Planet_Attract = m_Planet.FindAction("Attract", throwIfNotFound: true);
         m_Planet_Launch = m_Planet.FindAction("Launch", throwIfNotFound: true);
+        m_Planet_Orbit = m_Planet.FindAction("Orbit", throwIfNotFound: true);
     }
 
     ~@InputSystemActions()
@@ -1614,6 +1646,7 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
     private List<IPlanetActions> m_PlanetActionsCallbackInterfaces = new List<IPlanetActions>();
     private readonly InputAction m_Planet_Attract;
     private readonly InputAction m_Planet_Launch;
+    private readonly InputAction m_Planet_Orbit;
     /// <summary>
     /// Provides access to input actions defined in input action map "Planet".
     /// </summary>
@@ -1633,6 +1666,10 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Planet/Launch".
         /// </summary>
         public InputAction @Launch => m_Wrapper.m_Planet_Launch;
+        /// <summary>
+        /// Provides access to the underlying input action "Planet/Orbit".
+        /// </summary>
+        public InputAction @Orbit => m_Wrapper.m_Planet_Orbit;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1665,6 +1702,9 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @Launch.started += instance.OnLaunch;
             @Launch.performed += instance.OnLaunch;
             @Launch.canceled += instance.OnLaunch;
+            @Orbit.started += instance.OnOrbit;
+            @Orbit.performed += instance.OnOrbit;
+            @Orbit.canceled += instance.OnOrbit;
         }
 
         /// <summary>
@@ -1682,6 +1722,9 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @Launch.started -= instance.OnLaunch;
             @Launch.performed -= instance.OnLaunch;
             @Launch.canceled -= instance.OnLaunch;
+            @Orbit.started -= instance.OnOrbit;
+            @Orbit.performed -= instance.OnOrbit;
+            @Orbit.canceled -= instance.OnOrbit;
         }
 
         /// <summary>
@@ -1943,5 +1986,12 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLaunch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Orbit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOrbit(InputAction.CallbackContext context);
     }
 }

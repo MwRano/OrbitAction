@@ -937,6 +937,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Orbit",
+                    "type": "Button",
+                    "id": "47e97b85-e693-48d2-a666-fc1d410cd3a8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -981,6 +990,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Launch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8aaf35bc-c70d-4759-987a-a1c667710413",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Orbit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "908696a5-f5d8-44ab-98b7-a1a1799e88f3",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Orbit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
