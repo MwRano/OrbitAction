@@ -20,8 +20,8 @@ public class PlanetController : MonoBehaviour, IPlanetContext
         // InputSystemへのメソッド登録
         _inputSystemActions.Planet.Launch.performed += OnLaunch;
         _inputSystemActions.Planet.Attract.performed += OnAttract;
-        _inputSystemActions.Planet.Orbit.performed += _ => IsOrbiting = true;
-        _inputSystemActions.Planet.Orbit.canceled += _ => IsOrbiting = false;
+        _inputSystemActions.Planet.Orbit.performed += OnOrbit;
+        _inputSystemActions.Planet.Orbit.canceled += OnOrbit;
         _inputSystemActions.Planet.Enable();
 
         PlanetTransform = transform;
@@ -63,6 +63,15 @@ public class PlanetController : MonoBehaviour, IPlanetContext
         if (_stateMachine.CurrentState is DeployState deployState)
         {
             deployState.Attract(PlanetTransform.position);
+        }
+    }
+
+    private void OnOrbit(InputAction.CallbackContext context)
+    {
+        // DeployStateのときのみAttractを実行
+        if (_stateMachine.CurrentState is DeployState deployState)
+        {
+            deployState.Orbit(PlanetTransform.position, context.performed);
         }
     }
 }
