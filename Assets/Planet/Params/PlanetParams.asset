@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d4fe48384af3ee4b9f322d1281a5071, type: 3}
   m_Name: PlanetParams
   m_EditorClassIdentifier: 
-  smoothTime: 0.5
+  smoothTime: 0.2
   maxSpeed: 10
   launchDistance: 5
   attractionForce: 10
   attractionRange: 5
-  orbitalPeriod: 1
+  orbitalPeriod: 1.5
   orbitalRange: 3
