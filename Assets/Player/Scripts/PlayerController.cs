@@ -27,7 +27,8 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         if (_canControl) Move();
         Look();
     }
-
+    
+    public Transform PlayerTransform { get; private set; } = null!;
     public Rigidbody2D Rigidbody { get; private set; } = null!;
     public Animator PlayerAnimator { get; private set; } = null!;
     public bool IsGrounded { get; private set; }
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         Rigidbody = GetComponent<Rigidbody2D>();
         PlayerAnimator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        PlayerTransform = transform;
 
         // InputSystemへのメソッド登録
         _inputSystemActions.Player.Jump.performed += Jump;
