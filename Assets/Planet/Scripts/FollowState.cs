@@ -33,7 +33,7 @@ public class FollowState :IPlanetState
 
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
     {
-        Vector2 playerPos = _player.CurrentPosition;
+        Vector2 playerPos = _player.PlayerTransform.position;
         Vector2 targetPosition = _player.IsFacingRight　// playerの向きに応じて追従位置を変更
             ? new Vector2(playerPos.x - 1, playerPos.y + 1)
             : new Vector2(playerPos.x + 1, playerPos.y + 1);
@@ -47,7 +47,7 @@ public class FollowState :IPlanetState
         );
         
         // 状態遷移の判定
-        if(_player.CurrentVelocity.sqrMagnitude < 0.01f && _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
+        if(_player.Rigidbody.linearVelocity.sqrMagnitude < 0.01f && _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
         {
             stateMachine.TransitionTo(stateMachine.Hover, planet);
         }
