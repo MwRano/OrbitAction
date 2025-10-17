@@ -35,10 +35,18 @@ public class DeployState : IPlanetState
             .BindToPositionY(planet.PlanetTransform)
             .AddTo(planet.PlanetTransform);
 
+        
         // 公転範囲表示
         _orbitAreaView = planet.OrbitAreaView;
         _orbitAreaSpriteRenderer = planet.OrbitAreaSpriteRenderer;
-        InitSkill(_orbitAreaView, _orbitAreaSpriteRenderer, _planetParams.OrbitalRange);
+        
+        // 拡大モーション
+        float baseRadius = planet.OrbitAreaSpriteRenderer.sprite.bounds.extents.x;
+        _orbitAreaView.SetActive(true);
+        LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.5f)
+            .WithEase(Ease.OutBack)
+            .BindToLocalScaleXY(_orbitAreaView.transform)
+            .AddTo(_handles);
         
     }
 
@@ -52,19 +60,6 @@ public class DeployState : IPlanetState
     {
         _floatingMotion.Cancel();
         _orbitAreaView.SetActive(false);
-    }
-
-    /// <summary>
-    /// skillの設定初期化
-    /// </summary>
-    private void InitSkill(GameObject view, SpriteRenderer spriteRenderer, float range)
-    {
-        float baseRadius = spriteRenderer.sprite.bounds.extents.x;
-        if (baseRadius > 0)
-        {
-            view.transform.localScale = Vector2.one * (range / baseRadius);
-        }
-        view.SetActive(true);
     }
 
     /// <summary>
