@@ -15,7 +15,5 @@ MonoBehaviour:
   smoothTime: 0.2
   maxSpeed: 10
   launchDistance: 5
-  attractionForce: 10
-  attractionRange: 5
-  orbitalPeriod: 1.5
   orbitalRange: 3
+  releaseForce: 10
