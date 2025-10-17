@@ -13,11 +13,16 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     private PlayerParam _playerParams = null!;
     private SpriteRenderer _spriteRenderer = null!;
     private PlayerStateMachine _stateMachine = null!;
+    
+    public Transform PlayerTransform { get; private set; } = null!;
+    public Rigidbody2D Rigidbody { get; private set; } = null!;
+    public Animator PlayerAnimator { get; private set; } = null!;
+    public bool IsGrounded { get; private set; }
+    public bool IsFacingRight { get; private set; }
+    public Vector2 LookingDirection { get; private set; }
 
     void Update()
     {
-        CurrentPosition = transform.position;
-        CurrentVelocity = Rigidbody.linearVelocity;
         CheckGrounded();
         _stateMachine.Update(this);
     }
@@ -28,15 +33,6 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         Look();
     }
     
-    public Transform PlayerTransform { get; private set; } = null!;
-    public Rigidbody2D Rigidbody { get; private set; } = null!;
-    public Animator PlayerAnimator { get; private set; } = null!;
-    public bool IsGrounded { get; private set; }
-    public bool IsFacingRight { get; private set; }
-    public Vector2 LookingDirection { get; private set; }
-    public Vector2 CurrentPosition { get; private set; }
-    public Vector2 CurrentVelocity { get; private set; }
-
     /// <summary>
     /// playerの操作が可能かどうかを設定するメソッド
     /// </summary>

@@ -26,7 +26,7 @@ public class HoverState : IPlanetState
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
     {
         // 状態遷移の判定
-        if(_player.CurrentVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移
+        if(_player.Rigidbody.linearVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移
         {
             stateMachine.TransitionTo(stateMachine.Follow, planet);
         }
