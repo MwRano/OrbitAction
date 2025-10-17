@@ -59,7 +59,13 @@ public class DeployState : IPlanetState
     public void Exit()
     {
         _floatingMotion.Cancel();
-        _orbitAreaView.SetActive(false);
+        
+        // 縮小モーション
+        LMotion.Create((Vector2)_orbitAreaView.transform.localScale, Vector2.zero, 0.3f)
+            .WithEase(Ease.OutBack)
+            .WithOnComplete(()=>_orbitAreaView.SetActive(false))
+            .BindToLocalScaleXY(_orbitAreaView.transform)
+            .AddTo(_handles);
     }
 
     /// <summary>
