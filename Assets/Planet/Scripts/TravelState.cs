@@ -22,11 +22,13 @@ public class TravelState : IPlanetState
         // 移動モーション 
         // Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)planet.PlanetTransform.position;
         Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)_player.PlayerTransform.position;
-        LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.2f)
+        LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.5f)
             .WithEase(Ease.OutCubic)
             .WithOnComplete(() => _isReached = true)
             .BindToPositionXY(planet.PlanetTransform)
             .AddTo(planet.PlanetTransform);
+        
+        _player.DisableGravity();
     }
 
     public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
