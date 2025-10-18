@@ -16,6 +16,7 @@ public class DeployState : IPlanetState
     private readonly IPlayerContext _player;
     private MotionHandle _floatingMotion;
     private GameObject _orbitAreaView = null!;
+    private bool _isOrbiting = false;
 
     [Inject]
     public DeployState(PlanetParams planetParams, PlayerController player)
@@ -72,8 +73,10 @@ public class DeployState : IPlanetState
     public void Orbit(Vector2 planetPosition)
     {
         // 公転範囲内にPlayerがいるか判定
-        if (!TryGetSinglePlayerInOrbitArea(planetPosition, out var playerCollider)) return;
-        
+        if (!TryGetSinglePlayerInOrbitArea(planetPosition, out var playerCollider)
+            || _isOrbiting) return;
+
+        _isOrbiting = true;
         var playerRigidbody = playerCollider.gameObject.GetComponent<Rigidbody2D>();
         var directionToPlanet = planetPosition - playerRigidbody.position;
         var targetPos = _player.Rigidbody.position + directionToPlanet * 2; // planetと対照位置に移動するように
@@ -90,6 +93,7 @@ public class DeployState : IPlanetState
             .WithEase(Ease.Linear)
             .WithOnComplete(() =>
             {
+                _isOrbiting = false;
                 _player.SetCanControl(false); // 一時的に操作不可にする
                 _player.Rigidbody.linearVelocity = Vector2.zero;
                 playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
