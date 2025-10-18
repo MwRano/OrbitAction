@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     private PlayerParam _playerParams = null!;
     private SpriteRenderer _spriteRenderer = null!;
     private PlayerStateMachine _stateMachine = null!;
+    private float _baseGravityScale;
     
     public Transform PlayerTransform { get; private set; } = null!;
     public Rigidbody2D Rigidbody { get; private set; } = null!;
@@ -40,6 +41,22 @@ public class PlayerController : MonoBehaviour, IPlayerContext
     public void SetCanControl(bool value)
     {
         _canControl = value;
+    }
+    
+    /// <summary>
+    /// 重力を一時的に無効化するメソッド
+    /// </summary>
+    public void DisableGravity()
+    {
+        _baseGravityScale = Rigidbody.gravityScale;
+        Rigidbody.gravityScale = 0;
+        Rigidbody.linearVelocity = Vector2.zero;
+        Invoke(nameof(SetGravity), 1f); //HACK: 遅延処理は要変更
+    }
+    
+    private void SetGravity()
+    {
+        Rigidbody.gravityScale = _baseGravityScale;
     }
 
     [Inject]
@@ -106,4 +123,6 @@ public class PlayerController : MonoBehaviour, IPlayerContext
         Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
         Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
     }
+    
+    
 }
