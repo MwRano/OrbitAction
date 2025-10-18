@@ -685,9 +685,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 3560339504493233588, guid: 164c99cbeb83bb44282cb5ade8778ce8, type: 3}
-  m_Color: {r: 0.990566, g: 0.70975596, b: 0.23829652, a: 1}
+  m_Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 0.5529412}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -913,7 +913,7 @@ GameObject:
   - component: {fileID: 1643644293}
   - component: {fileID: 1643644295}
   m_Layer: 0
-  m_Name: planet
+  m_Name: Planet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
