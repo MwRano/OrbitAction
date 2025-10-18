@@ -94,7 +94,7 @@ public class DeployState : IPlanetState
                 _player.Rigidbody.linearVelocity = Vector2.zero;
                 playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
                     ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
-                Observable.Timer(TimeSpan.FromSeconds(0.2f))
+                Observable.Timer(TimeSpan.FromSeconds(0.1f))
                     .Subscribe(_ => _player.SetCanControl(true));　// delayしてから操作可能にする
             })
             .BindToLocalScale(_player.PlayerTransform)
