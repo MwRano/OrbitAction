@@ -79,13 +79,13 @@ public class DeployState : IPlanetState
         var targetPos = _player.Rigidbody.position + directionToPlanet * 2; // planetと対照位置に移動するように
         
         // 公転モーション
-        LMotion.Create(_player.Rigidbody.position, targetPos, 0.7f)
+        LMotion.Create(_player.Rigidbody.position, targetPos, 0.6f)
             .WithEase(Ease.InSine)
             .BindToLocalPositionXY(_player.PlayerTransform)
             .AddTo(_handles);
         
         // 拡大縮小モーション(手前に公転してるイメージ)
-        LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 2, 0.35f)
+        LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 1.5f, 0.3f)
             .WithLoops(2, LoopType.Yoyo) 
             .WithEase(Ease.Linear)
             .WithOnComplete(() =>
