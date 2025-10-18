@@ -10,5 +10,6 @@ public interface IPlayerContext
     Vector2 LookingDirection { get; }
 
     public void SetCanControl(bool value);
+    public void DisableGravity();
 
 }

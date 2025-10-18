@@ -15,8 +15,8 @@ public class DeployState : IPlanetState
     private readonly PlanetParams _planetParams;
     private readonly IPlayerContext _player;
     private MotionHandle _floatingMotion;
-    private SpriteRenderer _orbitAreaSpriteRenderer = null!;
     private GameObject _orbitAreaView = null!;
+    private bool _isOrbiting = false;
 
     [Inject]
     public DeployState(PlanetParams planetParams, PlayerController player)
@@ -38,12 +38,11 @@ public class DeployState : IPlanetState
         
         // 公転範囲表示
         _orbitAreaView = planet.OrbitAreaView;
-        _orbitAreaSpriteRenderer = planet.OrbitAreaSpriteRenderer;
         
         // 拡大モーション
         float baseRadius = planet.OrbitAreaSpriteRenderer.sprite.bounds.extents.x;
         _orbitAreaView.SetActive(true);
-        LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.5f)
+        LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.3f)
             .WithEase(Ease.OutBack)
             .BindToLocalScaleXY(_orbitAreaView.transform)
             .AddTo(_handles);
@@ -74,29 +73,32 @@ public class DeployState : IPlanetState
     public void Orbit(Vector2 planetPosition)
     {
         // 公転範囲内にPlayerがいるか判定
-        if (!TryGetSinglePlayerInOrbitArea(planetPosition, out var playerCollider)) return;
-        
+        if (!TryGetSinglePlayerInOrbitArea(planetPosition, out var playerCollider)
+            || _isOrbiting) return;
+
+        _isOrbiting = true;
         var playerRigidbody = playerCollider.gameObject.GetComponent<Rigidbody2D>();
         var directionToPlanet = planetPosition - playerRigidbody.position;
         var targetPos = _player.Rigidbody.position + directionToPlanet * 2; // planetと対照位置に移動するように
         
         // 公転モーション
-        LMotion.Create(_player.Rigidbody.position, targetPos, 0.7f)
+        LMotion.Create(_player.Rigidbody.position, targetPos, 0.6f)
             .WithEase(Ease.InSine)
             .BindToLocalPositionXY(_player.PlayerTransform)
             .AddTo(_handles);
         
         // 拡大縮小モーション(手前に公転してるイメージ)
-        LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 2, 0.35f)
+        LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 1.5f, 0.3f)
             .WithLoops(2, LoopType.Yoyo) 
             .WithEase(Ease.Linear)
             .WithOnComplete(() =>
             {
+                _isOrbiting = false;
                 _player.SetCanControl(false); // 一時的に操作不可にする
                 _player.Rigidbody.linearVelocity = Vector2.zero;
                 playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
                     ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
-                Observable.Timer(TimeSpan.FromSeconds(0.5f))
+                Observable.Timer(TimeSpan.FromSeconds(0.1f))
                     .Subscribe(_ => _player.SetCanControl(true));　// delayしてから操作可能にする
             })
             .BindToLocalScale(_player.PlayerTransform)
