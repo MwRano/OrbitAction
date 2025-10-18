@@ -15,7 +15,6 @@ public class DeployState : IPlanetState
     private readonly PlanetParams _planetParams;
     private readonly IPlayerContext _player;
     private MotionHandle _floatingMotion;
-    private SpriteRenderer _orbitAreaSpriteRenderer = null!;
     private GameObject _orbitAreaView = null!;
 
     [Inject]
@@ -38,12 +37,11 @@ public class DeployState : IPlanetState
         
         // 公転範囲表示
         _orbitAreaView = planet.OrbitAreaView;
-        _orbitAreaSpriteRenderer = planet.OrbitAreaSpriteRenderer;
         
         // 拡大モーション
         float baseRadius = planet.OrbitAreaSpriteRenderer.sprite.bounds.extents.x;
         _orbitAreaView.SetActive(true);
-        LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.5f)
+        LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.3f)
             .WithEase(Ease.OutBack)
             .BindToLocalScaleXY(_orbitAreaView.transform)
             .AddTo(_handles);
@@ -96,7 +94,7 @@ public class DeployState : IPlanetState
                 _player.Rigidbody.linearVelocity = Vector2.zero;
                 playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
                     ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
-                Observable.Timer(TimeSpan.FromSeconds(0.5f))
+                Observable.Timer(TimeSpan.FromSeconds(0.2f))
                     .Subscribe(_ => _player.SetCanControl(true));　// delayしてから操作可能にする
             })
             .BindToLocalScale(_player.PlayerTransform)
