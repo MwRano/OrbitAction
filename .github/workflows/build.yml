@@ -55,7 +55,7 @@ jobs:
 
       # 成果物をZIPにしてアップロードする
       - name: Upload the Windows Build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Build-${{ steps.vars.outputs.sha_short }}
           path: build
