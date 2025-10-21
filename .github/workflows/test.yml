@@ -5,6 +5,9 @@ jobs:
   test:
     name: Run EditMode and PlayMode Test
     runs-on: ubuntu-latest
+    env:
+      # 2. の手順で Secrets に登録した Unity ライセンスの情報を指定する
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
     steps:
       # actions/checkout@v2 を利用して作業ディレクトリに
       # Unity プロジェクトの中身をダウンロードしてくる
@@ -15,9 +18,7 @@ jobs:
       # EditMode 及び PlayMode のテストを実行する
       - name: Run EditMode and PlayMode Test
         uses: game-ci/unity-test-runner@v4
-        env:
-          # 2. の手順で Secrets に登録した Unity ライセンスの情報を指定する
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
 
           # もし Professional license を使いたい場合は、
           # メールアドレス、パスワード、シリアルナンバーを入力する必要がある
