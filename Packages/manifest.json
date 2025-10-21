@@ -51,6 +51,13 @@
   },
   "scopedRegistries": [
     {
+      "name": "Unity",
+      "url": "https://packages.unity.com",
+      "scopes": [
+        "com.unity"
+      ]
+    },
+    {
       "name": "VContainer",
       "url": "https://package.openupm.com",
       "scopes": [
