@@ -108,7 +108,8 @@ jobs:
         if: success()
         run: |
           curl -X POST -H "Content-Type: application/json" \
-          -d "{\"content\": \"デプロイ完了！最新のビルドデータです。 \n PLAY!!🎮 : ${{ steps.deployment.outputs.page_url }}\"}"
+          -d "{\"content\": \"デプロイ完了！最新のビルドデータです。 \n PLAY!!🎮 : ${{ steps.deployment.outputs.page_url }}\"}" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Notify Discord - Failure
         if: failure()
