@@ -20,18 +20,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-        
       - name: Set CompressionFormat to Disabled
         run: |
           sed -i -e 's/webGLCompressionFormat: ./webGLCompressionFormat: 2/' ProjectSettings/ProjectSettings.asset
 
-      # Cache
-      - name: Cache Library
+      # Debug: Show Library sizes
+      - name: Show Library folder sizes (debug)
+        run: |
+          du -sh Library || true
+          du -sh Library/* | sort -h || true
+
+      # Cache: 部分キャッシュ (Library の効果的なサブフォルダのみ)
+      - name: Cache important Library folders
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**','ProjectSettings/**') }}
-          restore-keys: Library-
+          path: |
+            Library/PackageCache
+            Library/ScriptAssemblies
+            Library/ShaderCache
+          key: Library-partial-${{ hashFiles('Assets/**','Packages/**','ProjectSettings/**') }}-v1
+          restore-keys: Library-partial-
+
+      # Build前のディスク掃除
+      - name: Free disk space on runner
+        run: |
+          sudo docker system prune -af || true
+          sudo docker builder prune -af || true
+          sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* || true
+          df -h
 
       # Build
       - name: Build project
@@ -87,7 +103,7 @@ jobs:
         if: success()
         run: |
           curl -X POST -H "Content-Type: application/json" \
-          -d "{\"content\": \"デプロイ完了！最新のビルドデータです。 \n PLAY!!🎮 : ${{ steps.deployment.outputs.page_url }}\n
+          -d "{\"content\": \"デプロイ完了！最新のビルドデータです。 \n PLAY!!🎮 : ${{ steps.deployment.outputs.page_url }}\n"
 
       - name: Notify Discord - Failure
         if: failure()
