@@ -29,6 +29,7 @@ jobs:
         with:
           targetPlatform: WebGL
           unityVersion: 6000.0.47f1 # ここは各自プロジェクトに合わせて設定
+          buildPath: ${{ env.target }}
      # Builder で出力した WebGL ビルドをアーティファクトでダウンロード可能にする
       - name: Upload the WebGL Build
         uses: actions/upload-artifact@v4
