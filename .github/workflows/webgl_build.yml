@@ -10,6 +10,10 @@ on:
   # 手動実行デバッグ用
   workflow_dispatch: {}
 
+env:
+  BUILD_DIR: build/WebGL
+  ARTIFACT_NAME: WebGLBuild
+  
 jobs:
   build:
     name: Build my project
@@ -18,6 +22,14 @@ jobs:
       # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: ${{ runner.os }}-unity-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt', 'Packages/manifest.json') }}
+          restore-keys: |
+            ${{ runner.os }}-unity-
 
       # Build
       - name: Build project
@@ -29,13 +41,18 @@ jobs:
         with:
           targetPlatform: WebGL
           unityVersion: 6000.0.47f1 # ここは各自プロジェクトに合わせて設定
-          buildPath: ${{ env.target }}
+          buildPath: ${{ env.BUILD_DIR }}
+
+      - name: Show build output (debug)
+        run: |
+          echo "BUILD_DIR=${{ env.BUILD_DIR }}"
+          ls -la ${{ env.BUILD_DIR }} || echo "Directory not found"   # ← 存在確認
      # Builder で出力した WebGL ビルドをアーティファクトでダウンロード可能にする
       - name: Upload the WebGL Build
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.target }}
-          path: ${{ env.target }}
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.BUILD_DIR }}
           
   # NetlifyへのDeploy処理
   deploy:
@@ -48,8 +65,8 @@ jobs:
      - name: Download artifact
        uses: actions/download-artifact@v4
        with:
-         name: ${{ env.target }}
-         path: ${{ env.target }}
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.BUILD_DIR }}
 
      # ダウンロードしたビルドファイルをNetlifyへDeploy
      - name: Deploy to Netlify
@@ -58,4 +75,4 @@ jobs:
          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
        with:
-         args: deploy --dir=${{ env.target }} --prod
+         args: deploy --dir=${{ env.BUILD_DIR }} --prod
