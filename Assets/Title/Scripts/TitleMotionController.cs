@@ -3,38 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 using LitMotion;
 using LitMotion.Extensions;
+using VContainer;
+using VContainer.Unity;
 
 namespace Title
 {
     /// <summary>
     /// title画面のモーション制御
     /// </summary>
-    public class TitleMotionController : MonoBehaviour
+    public class TitleMotionController : IStartable
     {
-        [SerializeField] private GameObject planetObject = null!;
-        [SerializeField] private List<GameObject> titleObjects = null!;
+        private readonly GameObject _planetObject;
+        private readonly IEnumerable<GameObject> _titleObjects;
         
-        void Awake()
+        [Inject]
+        public TitleMotionController(TitleMotionTargets targets)
+        {
+            _planetObject = targets.PlanetObject;
+            _titleObjects = targets.TitleObjects;
+        }
+        
+        public void Start()
         {
             // 自転モーション
-            LMotion.Create(0f, 360f, 120f)
+            AddRotateMotion(_planetObject.transform);
+            
+            foreach (var obj in _titleObjects)
+            {
+                AddFloatMotion(obj.transform);
+            }
+            
+            AddFloatMotion(_planetObject.transform);
+        }
+        
+        // 自転モーションを付与する
+        private void AddRotateMotion(Transform target, float startAngle = 0f, float endAngle = 360f, float maxDuration = 120f)
+        {
+            LMotion.Create(startAngle, endAngle, maxDuration)
                 .WithEase(Ease.Linear)
                 .WithLoops(-1)
-                .BindToLocalEulerAnglesZ(planetObject.transform)
-                .AddTo(planetObject.transform);
-            
-            titleObjects.Add(planetObject);
-            foreach (var obj in titleObjects)
-            {
-                // 浮遊モーション
-                float randomDuration = Random.Range(1f, 2f);
-                LMotion.Create(obj.transform.position.y, obj.transform.position.y - 0.2f, randomDuration)
-                    .WithEase(Ease.InOutSine)
-                    .WithLoops(-1, LoopType.Yoyo)
-                    .BindToPositionY(obj.transform)
-                    .AddTo(obj.transform);
-            }
+                .BindToLocalEulerAnglesZ(target.transform)
+                .AddTo(target.transform);
+        }
+
+        // 浮遊モーションを付与する
+        private void AddFloatMotion(Transform target, float offsetY = -0.2f, float minDuration = 1f, float maxDuration = 2f)
+        {
+            var randomDuration = Random.Range(minDuration, maxDuration);
+            LMotion.Create(target.position.y, target.position.y + offsetY, randomDuration)
+                .WithEase(Ease.InOutSine)
+                .WithLoops(-1, LoopType.Yoyo)
+                .BindToPositionY(target)
+                .AddTo(target);
         }
     }
 }
-
