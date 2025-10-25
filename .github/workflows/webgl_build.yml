@@ -1,14 +1,12 @@
 name: Build
 
 on:
-  # masterへのPRマージをトリガーとしてワークフローを開始する
-  pull_request:
+  push:
     branches:
       - develop
       - main
     types: [closed]
 
-  # 手動実行デバッグ用
   workflow_dispatch: {}
 
 jobs:
@@ -24,13 +22,7 @@ jobs:
         run: |
           sed -i -e 's/webGLCompressionFormat: ./webGLCompressionFormat: 2/' ProjectSettings/ProjectSettings.asset
 
-      # Debug: Show Library sizes
-      - name: Show Library folder sizes (debug)
-        run: |
-          du -sh Library || true
-          du -sh Library/* | sort -h || true
-
-      # Cache: 部分キャッシュ (Library の効果的なサブフォルダのみ)
+      # Cache
       - name: Cache important Library folders
         uses: actions/cache@v4
         with:
@@ -64,7 +56,7 @@ jobs:
         with:
           targetPlatform: WebGL
           allowDirtyBuild: true
-          unityVersion: 6000.0.47f1 # ここは各自プロジェクトに合わせて設定
+          unityVersion: 6000.0.47f1 
 
       # Remove
       - name: Remove symlinks and macOS hidden files
