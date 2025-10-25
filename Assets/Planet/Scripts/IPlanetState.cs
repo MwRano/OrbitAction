@@ -1,6 +1,9 @@
-﻿public interface IPlanetState
+﻿namespace Planet
 {
-    public void Enter(IPlanetContext planet);
-    public void Update(IPlanetContext planet, PlanetStateMachine stateMachine);
-    public void Exit();
+    public interface IPlanetState
+    {
+        public void Enter(IPlanetContext planet);
+        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine);
+        public void Exit();
+    }
 }

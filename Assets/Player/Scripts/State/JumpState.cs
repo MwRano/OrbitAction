@@ -1,39 +1,40 @@
 #nullable enable
 using UnityEngine;
 
-public class JumpState : IPlayerState
+namespace Player
 {
-    public void Enter(IPlayerContext playerContext)
+    public class JumpState : IPlayerState
     {
-        playerContext.PlayerAnimator.SetTrigger(AnimatorParams.JumpHash);
-    }
-
-    public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
-    {
-        if (playerContext.IsGrounded)
+        public void Enter(IPlayerContext playerContext)
         {
-            // Walkへの遷移
-            if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0.1f)
+            playerContext.PlayerAnimator.SetTrigger(AnimatorParams.JumpHash);
+        }
+
+        public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
+        {
+            if (playerContext.IsGrounded)
             {
-                stateMachine.TransitionTo(stateMachine.Walk, playerContext);
+                // Walkへの遷移
+                if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0.1f)
+                {
+                    stateMachine.TransitionTo(stateMachine.Walk, playerContext);
+                }
+                // Idleへの遷移
+                else
+                {
+                    stateMachine.TransitionTo(stateMachine.Idle, playerContext);
+                }
             }
-            // Idleへの遷移
-            else
+
+            // Fallへの遷移
+            if (playerContext.Rigidbody.linearVelocityY < -0.1f)
             {
-                stateMachine.TransitionTo(stateMachine.Idle, playerContext);
+                stateMachine.TransitionTo(stateMachine.Fall, playerContext);
             }
         }
 
-        // Fallへの遷移
-        if (playerContext.Rigidbody.linearVelocityY < -0.1f)
+        public void Exit()
         {
-            stateMachine.TransitionTo(stateMachine.Fall, playerContext);
         }
     }
-
-    public void Exit()
-    {
-        
-    }
-
 }

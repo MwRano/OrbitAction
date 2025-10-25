@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
-public interface IPlanetContext
+namespace Planet
 {
-    GameObject OrbitAreaView { get; }
-    SpriteRenderer OrbitAreaSpriteRenderer { get; }
-    Transform PlanetTransform { get; }
-    bool IsLaunched { get; }
+    public interface IPlanetContext
+    {
+        GameObject OrbitAreaView { get; }
+        SpriteRenderer OrbitAreaSpriteRenderer { get; }
+        Transform PlanetTransform { get; }
+        bool IsLaunched { get; }
+    }
 }
