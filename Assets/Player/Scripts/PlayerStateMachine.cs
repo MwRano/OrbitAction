@@ -2,45 +2,49 @@
 
 using VContainer;
 
-/// <summary>
-/// Playerの状態を管理するステートマシン
-/// </summary>
-public class PlayerStateMachine
+namespace Player
 {
-    private IPlayerState _currentState  = null!;
-    public IdleState Idle { get; }
-    public WalkState Walk { get; }
-    public JumpState Jump { get; }
-    public FallState Fall { get; }
-
-    [Inject]
-    public PlayerStateMachine(
-        IdleState idleState,
-        WalkState walkState,
-        JumpState jumpState,
-        FallState fallState)
+    /// <summary>
+    /// Playerの状態を管理するステートマシン
+    /// </summary>
+    public class PlayerStateMachine
     {
-        Idle = idleState;
-        Walk = walkState;
-        Jump = jumpState;
-        Fall = fallState;
-    }
+        private IPlayerState _currentState = null!;
 
-    public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
-    {
-        _currentState = startingState;
-        startingState.Enter(playerContext);
-    }
+        [Inject]
+        public PlayerStateMachine(
+            IdleState idleState,
+            WalkState walkState,
+            JumpState jumpState,
+            FallState fallState)
+        {
+            Idle = idleState;
+            Walk = walkState;
+            Jump = jumpState;
+            Fall = fallState;
+        }
 
-    public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
-    {
-        _currentState.Exit();
-        _currentState = nextState;
-        nextState.Enter(playerContext);
-    }
+        public IdleState Idle { get; }
+        public WalkState Walk { get; }
+        public JumpState Jump { get; }
+        public FallState Fall { get; }
 
-    public void Update(IPlayerContext playerContext)
-    {
-        _currentState.Update(playerContext, this);
+        public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
+        {
+            _currentState = startingState;
+            startingState.Enter(playerContext);
+        }
+
+        public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
+        {
+            _currentState.Exit();
+            _currentState = nextState;
+            nextState.Enter(playerContext);
+        }
+
+        public void Update(IPlayerContext playerContext)
+        {
+            _currentState.Update(playerContext, this);
+        }
     }
 }
