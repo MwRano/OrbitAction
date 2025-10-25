@@ -3,37 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using LitMotion;
 using LitMotion.Extensions;
-using VContainer;
-using VContainer.Unity;
 
 namespace Title
 {
     /// <summary>
     /// title画面のモーション制御
     /// </summary>
-    public class TitleMotionController : IStartable
+    public class TitleMotionController : MonoBehaviour
     {
-        private readonly GameObject _planetObject;
-        private readonly IEnumerable<GameObject> _titleObjects;
+        [SerializeField] private GameObject planetObject = null!;
+        [SerializeField] private List<GameObject> titleObjects = null!;
         
-        [Inject]
-        public TitleMotionController(TitleMotionTargets targets)
-        {
-            _planetObject = targets.PlanetObject;
-            _titleObjects = targets.TitleObjects;
-        }
-        
-        public void Start()
+        public void Awake()
         {
             // 自転モーション
-            AddRotateMotion(_planetObject.transform);
+            AddRotateMotion(planetObject.transform);
             
-            foreach (var obj in _titleObjects)
+            foreach (var obj in titleObjects)
             {
                 AddFloatMotion(obj.transform);
             }
             
-            AddFloatMotion(_planetObject.transform);
+            AddFloatMotion(planetObject.transform);
         }
         
         // 自転モーションを付与する
@@ -42,8 +33,8 @@ namespace Title
             LMotion.Create(startAngle, endAngle, maxDuration)
                 .WithEase(Ease.Linear)
                 .WithLoops(-1)
-                .BindToLocalEulerAnglesZ(target.transform)
-                .AddTo(target.transform);
+                .BindToLocalEulerAnglesZ(target)
+                .AddTo(target);
         }
 
         // 浮遊モーションを付与する
