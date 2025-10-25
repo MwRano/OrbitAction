@@ -1,45 +1,48 @@
 ﻿#nullable enable
 using VContainer;
 
-/// <summary>
-/// planetの状態を管理するクラス
-/// </summary>
-public class PlanetStateMachine
+namespace Planet
 {
-    public IPlanetState CurrentState { get; private set; } = null!;
-    public HoverState Hover { get; }
-    public FollowState Follow { get; }
-    public TravelState Travel { get; }
-    public DeployState Deploy { get; }
-    
-    [Inject]
-    public PlanetStateMachine(
-        HoverState hoverState,
-        FollowState followState,
-        TravelState travelState,
-        DeployState deployState)
+    /// <summary>
+    /// planetの状態を管理するクラス
+    /// </summary>
+    public class PlanetStateMachine
     {
-        Hover = hoverState;
-        Follow = followState;
-        Travel = travelState;
-        Deploy = deployState;
-    }
+        [Inject]
+        public PlanetStateMachine(
+            HoverState hoverState,
+            FollowState followState,
+            TravelState travelState,
+            DeployState deployState)
+        {
+            Hover = hoverState;
+            Follow = followState;
+            Travel = travelState;
+            Deploy = deployState;
+        }
 
-    public void Initialize(IPlanetState startingState, IPlanetContext planet)
-    {
-        CurrentState = startingState;
-        startingState.Enter(planet);
-    }
+        public IPlanetState CurrentState { get; private set; } = null!;
+        public HoverState Hover { get; }
+        public FollowState Follow { get; }
+        public TravelState Travel { get; }
+        public DeployState Deploy { get; }
 
-    public void TransitionTo(IPlanetState nextState, IPlanetContext planet)
-    {
-        CurrentState.Exit();
-        CurrentState = nextState;
-        nextState.Enter(planet);
-    }
+        public void Initialize(IPlanetState startingState, IPlanetContext planet)
+        {
+            CurrentState = startingState;
+            startingState.Enter(planet);
+        }
 
-    public void Update(IPlanetContext planet)
-    {
-        CurrentState.Update(planet, this);
+        public void TransitionTo(IPlanetState nextState, IPlanetContext planet)
+        {
+            CurrentState.Exit();
+            CurrentState = nextState;
+            nextState.Enter(planet);
+        }
+
+        public void Update(IPlanetContext planet)
+        {
+            CurrentState.Update(planet, this);
+        }
     }
 }
