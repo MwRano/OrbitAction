@@ -1,7 +1,11 @@
 #nullable enable
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
+using LitMotion;
+using LitMotion.Extensions;
+using Cysharp.Threading.Tasks;
 
 namespace Player
 {
@@ -134,6 +138,43 @@ namespace Player
 
             Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
             Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
+        }
+
+        // 公転してから発射するメソッド(クリア時の演出のみ使用)
+        public async UniTask StartClearMotionAsync(Transform center, float radius)
+        {
+            var token = this.GetCancellationTokenOnDestroy();
+
+            // planetが上昇するまで待機
+            await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: token);
+
+
+            // 少し上昇するモーション
+            await LMotion.Create((Vector2)transform.position, (Vector2)transform.position + Vector2.up, 2.0f)
+                .WithEase(Ease.OutSine)
+                .BindToPositionXY(transform)
+                .ToUniTask(cancellationToken: token);
+
+
+            // XY公転モーション
+            Vector3 toCenter = transform.position - center.position;
+            float startAngle = Mathf.Atan2(toCenter.y, toCenter.x) * Mathf.Rad2Deg;
+            float totalAngle = 360f * 10 + 90f;
+            Vector2 force = Vector2.up * 100f;
+            await LMotion.Create(startAngle, startAngle + totalAngle, 10)
+                .WithEase(Ease.InCubic) // 徐々に加速するイージング
+                .WithOnComplete(() =>
+                {
+                    DisableGravity();
+                    Rigidbody.AddForce(force, ForceMode2D.Impulse);
+                })
+                .Bind(angle =>
+                {
+                    float rad = angle * Mathf.Deg2Rad;
+                    Vector3 offset = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f) * (radius - 1.0f);
+                    transform.position = center.position + offset;
+                })
+                .ToUniTask(cancellationToken: token);
         }
     }
 }
