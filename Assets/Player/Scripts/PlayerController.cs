@@ -17,17 +17,26 @@ namespace Player
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
 
-        void Update()
+        private void Update()
         {
             CheckGrounded();
             _stateMachine.Update(this);
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (_canControl) Move();
             Look();
         }
+
+        // 接触判定
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (!other.gameObject.CompareTag("Goal")) return;
+            IsGoalReached = true;
+        }
+
+        public bool IsGoalReached { get; private set; } = false;
 
         public Transform PlayerTransform { get; private set; } = null!;
         public Rigidbody2D Rigidbody { get; private set; } = null!;
