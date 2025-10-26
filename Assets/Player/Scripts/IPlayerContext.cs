@@ -10,6 +10,7 @@ namespace Player
         bool IsGrounded { get; }
         bool IsFacingRight { get; }
         Vector2 LookingDirection { get; }
+        bool IsGoalReached { get; }
 
         public void SetCanControl(bool value);
         public void DisableGravity();
