@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Game;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
@@ -14,7 +15,9 @@ namespace Planet
         private bool _isReached;
 
         [Inject]
-        public TravelState(IPlayerContext player, PlanetParams planetParams)
+        public TravelState(
+            IPlayerContext player,
+            PlanetParams planetParams)
         {
             _player = player;
             _launchDistance = planetParams.LaunchDistance;
@@ -23,8 +26,12 @@ namespace Planet
         public void Enter(IPlanetContext planet)
         {
             // 移動モーション 
-            // Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)planet.PlanetTransform.position;
             Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)_player.PlayerTransform.position;
+            if (_player.IsGoalReached)
+            {
+                destPos = (Vector2.up * 10) + (Vector2)_player.PlayerTransform.position;
+            }
+
             LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
                 .WithEase(Ease.OutCubic)
                 .WithOnComplete(() => _isReached = true)
@@ -37,7 +44,7 @@ namespace Planet
         public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
         {
             // 到達すればdeployに遷移
-            if (_isReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);
+            if (_isReached && _player.IsGoalReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);
         }
 
         public void Exit()
