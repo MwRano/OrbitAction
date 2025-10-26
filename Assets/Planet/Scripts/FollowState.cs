@@ -55,7 +55,7 @@ namespace Planet
             {
                 stateMachine.TransitionTo(stateMachine.Hover, planet);
             }
-            else if (planet.IsLaunched)
+            else if (planet.IsLaunched || _player.IsGoalReached) // 発射されたらTravelへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Travel, planet);
             }

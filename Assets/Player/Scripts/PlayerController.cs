@@ -1,7 +1,11 @@
 #nullable enable
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
+using LitMotion;
+using LitMotion.Extensions;
+using Cysharp.Threading.Tasks;
 
 namespace Player
 {
@@ -17,24 +21,33 @@ namespace Player
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
 
-        void Update()
+        private void Update()
         {
             CheckGrounded();
             _stateMachine.Update(this);
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (_canControl) Move();
             Look();
         }
 
+        // 接触判定
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (!other.gameObject.CompareTag("Goal")) return;
+            IsGoalReached = true;
+        }
+
+        public bool IsGoalReached { get; private set; }
         public Transform PlayerTransform { get; private set; } = null!;
         public Rigidbody2D Rigidbody { get; private set; } = null!;
         public Animator PlayerAnimator { get; private set; } = null!;
         public bool IsGrounded { get; private set; }
         public bool IsFacingRight { get; private set; }
         public Vector2 LookingDirection { get; private set; }
+
 
         /// <summary>
         /// playerの操作が可能かどうかを設定するメソッド
@@ -48,12 +61,15 @@ namespace Player
         /// <summary>
         /// 重力を一時的に無効化するメソッド
         /// </summary>
-        public void DisableGravity()
+        public async UniTask DisableGravityAsync()
         {
+            var token = this.GetCancellationTokenOnDestroy();
+
             _baseGravityScale = Rigidbody.gravityScale;
             Rigidbody.gravityScale = 0;
             Rigidbody.linearVelocity = Vector2.zero;
-            Invoke(nameof(SetGravity), 1f); //HACK: 遅延処理は要変更
+            await UniTask.Delay(TimeSpan.FromSeconds(1.0f), cancellationToken: token);
+            SetGravity();
         }
 
         [Inject]
@@ -85,7 +101,6 @@ namespace Player
         {
             Rigidbody.gravityScale = _baseGravityScale;
         }
-
 
         /// <summary>
         /// 接地判定を行うメソッド
@@ -125,6 +140,43 @@ namespace Player
 
             Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
             Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
+        }
+
+        // 公転してから発射するメソッド(クリア時の演出のみ使用)
+        public async UniTask StartClearMotionAsync(Transform center, float radius)
+        {
+            var token = this.GetCancellationTokenOnDestroy();
+
+            // planetが上昇するまで待機
+            await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: token);
+
+
+            // 少し上昇するモーション
+            await LMotion.Create((Vector2)transform.position, (Vector2)transform.position + Vector2.up, 2.0f)
+                .WithEase(Ease.OutSine)
+                .BindToPositionXY(transform)
+                .ToUniTask(cancellationToken: token);
+
+
+            // XY公転モーション
+            Vector3 toCenter = transform.position - center.position;
+            float startAngle = Mathf.Atan2(toCenter.y, toCenter.x) * Mathf.Rad2Deg;
+            float totalAngle = 360f * 10 + 90f;
+            Vector2 force = Vector2.up * 100f;
+            await LMotion.Create(startAngle, startAngle + totalAngle, 10)
+                .WithEase(Ease.InCubic) // 徐々に加速するイージング
+                .WithOnComplete(() =>
+                {
+                    DisableGravityAsync().Forget();
+                    Rigidbody.AddForce(force, ForceMode2D.Impulse);
+                })
+                .Bind(angle =>
+                {
+                    float rad = angle * Mathf.Deg2Rad;
+                    Vector3 offset = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f) * (radius - 1.0f);
+                    transform.position = center.position + offset;
+                })
+                .ToUniTask(cancellationToken: token);
         }
     }
 }

@@ -18,6 +18,9 @@ namespace Game
             builder.RegisterInstance(playerParam).AsImplementedInterfaces();
             builder.RegisterInstance(planetParams).AsImplementedInterfaces();
 
+            //Game
+            builder.RegisterEntryPoint<GameClearDirector>(Lifetime.Scoped);
+
             // Input
             builder.Register<InputSystemActions>(Lifetime.Scoped);
 
