@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Game;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
@@ -10,7 +9,7 @@ namespace Planet
 {
     public class TravelState : IPlanetState
     {
-        private readonly float _launchDistance;
+        private readonly PlanetParams _planetParams;
         private readonly IPlayerContext _player;
         private bool _isReached;
 
@@ -20,16 +19,17 @@ namespace Planet
             PlanetParams planetParams)
         {
             _player = player;
-            _launchDistance = planetParams.LaunchDistance;
+            _planetParams = planetParams;
         }
 
         public void Enter(IPlanetContext planet)
         {
             // 移動モーション 
-            Vector2 destPos = _launchDistance * _player.LookingDirection + (Vector2)_player.PlayerTransform.position;
+            Vector2 destPos = _planetParams.LaunchDistance * _player.LookingDirection +
+                              (Vector2)_player.PlayerTransform.position;
             if (_player.IsGoalReached)
             {
-                destPos = (Vector2.up * 10) + (Vector2)_player.PlayerTransform.position;
+                destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.PlayerTransform.position;
             }
 
             LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
