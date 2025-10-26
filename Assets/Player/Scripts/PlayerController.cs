@@ -40,14 +40,14 @@ namespace Player
             IsGoalReached = true;
         }
 
-        public bool IsGoalReached { get; private set; } = false;
-
+        public bool IsGoalReached { get; private set; }
         public Transform PlayerTransform { get; private set; } = null!;
         public Rigidbody2D Rigidbody { get; private set; } = null!;
         public Animator PlayerAnimator { get; private set; } = null!;
         public bool IsGrounded { get; private set; }
         public bool IsFacingRight { get; private set; }
         public Vector2 LookingDirection { get; private set; }
+
 
         /// <summary>
         /// playerの操作が可能かどうかを設定するメソッド
@@ -61,12 +61,15 @@ namespace Player
         /// <summary>
         /// 重力を一時的に無効化するメソッド
         /// </summary>
-        public void DisableGravity()
+        public async UniTask DisableGravityAsync()
         {
+            var token = this.GetCancellationTokenOnDestroy();
+
             _baseGravityScale = Rigidbody.gravityScale;
             Rigidbody.gravityScale = 0;
             Rigidbody.linearVelocity = Vector2.zero;
-            Invoke(nameof(SetGravity), 1f); //HACK: 遅延処理は要変更
+            await UniTask.Delay(TimeSpan.FromSeconds(1.0f), cancellationToken: token);
+            SetGravity();
         }
 
         [Inject]
@@ -98,7 +101,6 @@ namespace Player
         {
             Rigidbody.gravityScale = _baseGravityScale;
         }
-
 
         /// <summary>
         /// 接地判定を行うメソッド
@@ -165,7 +167,7 @@ namespace Player
                 .WithEase(Ease.InCubic) // 徐々に加速するイージング
                 .WithOnComplete(() =>
                 {
-                    DisableGravity();
+                    DisableGravityAsync().Forget();
                     Rigidbody.AddForce(force, ForceMode2D.Impulse);
                 })
                 .Bind(angle =>

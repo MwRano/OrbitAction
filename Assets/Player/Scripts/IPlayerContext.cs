@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Player
 {
@@ -13,6 +15,6 @@ namespace Player
         bool IsGoalReached { get; }
 
         public void SetCanControl(bool value);
-        public void DisableGravity();
+        public UniTask DisableGravityAsync();
     }
 }

@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Cysharp.Threading.Tasks;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
@@ -38,7 +39,7 @@ namespace Planet
                 .BindToPositionXY(planet.PlanetTransform)
                 .AddTo(planet.PlanetTransform);
 
-            _player.DisableGravity();
+            _player.DisableGravityAsync().Forget();
         }
 
         public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
