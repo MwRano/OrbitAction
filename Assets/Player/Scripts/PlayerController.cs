@@ -67,14 +67,11 @@ namespace Player
         }
 
         /// <summary>
-        /// 重力を一時的に無効化するメソッド
+        /// 物理演算を有効/無効にするメソッド
         /// </summary>
-        public async UniTask DisableGravityAsync()
+        public void SetIsSimulated(bool isSimulated)
         {
-            var token = this.GetCancellationTokenOnDestroy();
-            Rigidbody.simulated = false;
-            await UniTask.Delay(TimeSpan.FromSeconds(1.0f), cancellationToken: token);
-            Rigidbody.simulated = true;
+            Rigidbody.simulated = isSimulated;
         }
 
         [Inject]
@@ -111,11 +108,12 @@ namespace Player
         
         private void Respawn()
         {
-            DisableGravityAsync().Forget();
+            Rigidbody.simulated = false;
             SetCanControl(false);
             Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ => 
             {
                 transform.position = _respawnPosition;
+                Rigidbody.simulated = true;
                 SetCanControl(true);
             });
         }
@@ -185,7 +183,7 @@ namespace Player
                 .WithEase(Ease.InCubic) // 徐々に加速するイージング
                 .WithOnComplete(() =>
                 {
-                    DisableGravityAsync().Forget();
+                    Rigidbody.gravityScale = 0;
                     Rigidbody.AddForce(force, ForceMode2D.Impulse);
                 })
                 .Bind(angle =>
