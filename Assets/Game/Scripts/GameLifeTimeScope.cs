@@ -31,6 +31,7 @@ namespace Game
             builder.Register<WalkState>(Lifetime.Scoped);
             builder.Register<JumpState>(Lifetime.Scoped);
             builder.Register<FallState>(Lifetime.Scoped);
+            builder.Register<DeathState>(Lifetime.Scoped);
 
             // Planet
             builder.RegisterComponentInHierarchy<PlanetController>().As<IPlanetContext>().AsSelf();

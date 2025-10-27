@@ -7,11 +7,17 @@ namespace Player
     {
         public void Enter(IPlayerContext playerContext)
         {
-            playerContext.PlayerAnimator.SetTrigger(AnimatorParams.JumpHash);
+            playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.JumpHash);
         }
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
         {
+            // Deathへの遷移
+            if(playerContext.IsDead) 
+            {
+                stateMachine.TransitionTo(stateMachine.Death, playerContext);
+            }
+            
             if (playerContext.IsGrounded)
             {
                 // Walkへの遷移
