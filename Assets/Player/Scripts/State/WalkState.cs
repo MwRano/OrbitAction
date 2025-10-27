@@ -5,6 +5,9 @@ namespace Player
 {
     public class WalkState : IPlayerState
     {
+        const float VerticalThreshold = 0.1f;
+        const float HorizontalIdleThreshold = 0.1f;
+
         public void Enter(IPlayerContext playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.WalkHash);
@@ -12,36 +15,49 @@ namespace Player
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
         {
-            // Deathへの遷移
-            if(playerContext.IsDead) 
+            if (ShouldTransitionToDeath(playerContext))
             {
                 stateMachine.TransitionTo(stateMachine.Death, playerContext);
-            }
-            
-            if (!playerContext.IsGrounded)
-            {
-                switch (playerContext.Rigidbody.linearVelocityY)
-                {
-                    // Jumpへの遷移
-                    case > 0.1f:
-                        stateMachine.TransitionTo(stateMachine.Jump, playerContext);
-                        break;
-                    // Fallへの遷移
-                    case < -0.1f:
-                        stateMachine.TransitionTo(stateMachine.Fall, playerContext);
-                        break;
-                }
+                return;
             }
 
-            // idleへの遷移
-            if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) < 0.1f)
-            {
-                stateMachine.TransitionTo(stateMachine.Idle, playerContext);
-            }
+            if (TryHandleAirTransition(playerContext, stateMachine)) return;
+
+            if (TryHandleIdleTransition(playerContext, stateMachine)) return;
+            
         }
 
         public void Exit()
         {
+        }
+
+        private static bool ShouldTransitionToDeath(IPlayerContext ctx) => ctx.IsDead;
+
+        private static bool TryHandleAirTransition(IPlayerContext ctx, PlayerStateMachine sm)
+        {
+            if (ctx.IsGrounded) return false;
+
+            switch (ctx.Rigidbody.linearVelocityY)
+            {
+                case > VerticalThreshold:
+                    sm.TransitionTo(sm.Jump, ctx);
+                    return true;
+                case < -VerticalThreshold:
+                    sm.TransitionTo(sm.Fall, ctx);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool TryHandleIdleTransition(IPlayerContext ctx, PlayerStateMachine sm)
+        {
+            if (Mathf.Abs(ctx.Rigidbody.linearVelocityX) < HorizontalIdleThreshold)
+            {
+                sm.TransitionTo(sm.Idle, ctx);
+                return true;
+            }
+            return false;
         }
     }
 }
