@@ -5,7 +5,7 @@ namespace Player
     /// <summary>
     /// Animatorのパラメータをhash値として管理する静的クラス
     /// </summary>
-    public static class AnimatorParams
+    public static class PlayerAnimationIds
     {
         public static readonly int IdleHash = Animator.StringToHash("Idle");
         public static readonly int JumpHash = Animator.StringToHash("Jump");

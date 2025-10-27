@@ -7,7 +7,7 @@ namespace Player
     {
         public void Enter(IPlayerContext playerContext)
         {
-            playerContext.PlayerAnimator.SetTrigger(AnimatorParams.IdleHash);
+            playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.IdleHash);
         }
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
