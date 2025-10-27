@@ -16,18 +16,21 @@ namespace Player
             IdleState idleState,
             WalkState walkState,
             JumpState jumpState,
-            FallState fallState)
+            FallState fallState,
+            DeathState deathState)
         {
             Idle = idleState;
             Walk = walkState;
             Jump = jumpState;
             Fall = fallState;
+            Death = deathState;
         }
 
         public IdleState Idle { get; }
         public WalkState Walk { get; }
         public JumpState Jump { get; }
         public FallState Fall { get; }
+        public DeathState Death { get; }
 
         public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
         {
