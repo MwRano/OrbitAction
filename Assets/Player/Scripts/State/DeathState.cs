@@ -7,6 +7,7 @@ namespace Player
         public void Enter(IPlayerContext playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
+            playerContext.IsDead = false;
         }
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)

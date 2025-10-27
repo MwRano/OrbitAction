@@ -969,7 +969,7 @@ GameObject:
   - component: {fileID: 2014325496685321163}
   m_Layer: 0
   m_Name: SpawnPoint
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1331,3 +1331,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 7823093279122053961}
+  respawnPoint: {fileID: 5625867453996970571}

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Goal
   - DeadZone
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX
