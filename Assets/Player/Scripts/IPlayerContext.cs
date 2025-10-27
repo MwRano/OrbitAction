@@ -16,6 +16,6 @@ namespace Player
         bool IsDead { get; set; }
 
         public void SetCanControl(bool value);
-        public UniTask DisableGravityAsync();
+        public void SetIsSimulated(bool isSimulated);
     }
 }
