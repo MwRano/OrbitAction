@@ -6,6 +6,7 @@ using VContainer;
 using LitMotion;
 using LitMotion.Extensions;
 using Cysharp.Threading.Tasks;
+using R3;
 
 namespace Player
 {
@@ -20,6 +21,7 @@ namespace Player
         private PlayerParam _playerParams = null!;
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
+        private Vector2 _respawnPosition;
 
         private void Update()
         {
@@ -34,14 +36,18 @@ namespace Player
         }
 
         // 接触判定
-        private void OnCollisionEnter2D(Collision2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.gameObject.CompareTag("DeadZone")) IsDead = true;
+            if (other.gameObject.CompareTag("DeadZone"))
+            {
+                IsDead = true;
+                Respawn();
+            }
             if (other.gameObject.CompareTag("Goal")) IsGoalReached = true;
         }
 
         public bool IsGoalReached { get; private set; }
-        public bool IsDead { get; private set; }
+        public bool IsDead { get; set; }
         public Transform PlayerTransform { get; private set; } = null!;
         public Rigidbody2D Rigidbody { get; private set; } = null!;
         public Animator PlayerAnimator { get; private set; } = null!;
@@ -56,6 +62,7 @@ namespace Player
         /// <param name="value"></param>
         public void SetCanControl(bool value)
         {
+            Rigidbody.linearVelocity = Vector2.zero;
             _canControl = value;
         }
 
@@ -65,12 +72,9 @@ namespace Player
         public async UniTask DisableGravityAsync()
         {
             var token = this.GetCancellationTokenOnDestroy();
-
-            _baseGravityScale = Rigidbody.gravityScale;
-            Rigidbody.gravityScale = 0;
-            Rigidbody.linearVelocity = Vector2.zero;
+            Rigidbody.simulated = false;
             await UniTask.Delay(TimeSpan.FromSeconds(1.0f), cancellationToken: token);
-            SetGravity();
+            Rigidbody.simulated = true;
         }
 
         [Inject]
@@ -97,12 +101,25 @@ namespace Player
             // SMの初期化
             _stateMachine.Initialize(playerStateMachine.Idle, this);
         }
-
-        private void SetGravity()
+        
+        
+        // リスポーン位置を設定するメソッド
+        public void SetRespawnPosition(Vector2 position)
         {
-            Rigidbody.gravityScale = _baseGravityScale;
+            _respawnPosition = position;
         }
-
+        
+        private void Respawn()
+        {
+            DisableGravityAsync().Forget();
+            SetCanControl(false);
+            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ => 
+            {
+                transform.position = _respawnPosition;
+                SetCanControl(true);
+            });
+        }
+        
         /// <summary>
         /// 接地判定を行うメソッド
         /// </summary>
