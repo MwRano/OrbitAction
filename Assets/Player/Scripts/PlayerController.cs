@@ -36,11 +36,12 @@ namespace Player
         // 接触判定
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (!other.gameObject.CompareTag("Goal")) return;
-            IsGoalReached = true;
+            if (other.gameObject.CompareTag("DeadZone")) IsDead = true;
+            if (other.gameObject.CompareTag("Goal")) IsGoalReached = true;
         }
 
         public bool IsGoalReached { get; private set; }
+        public bool IsDead { get; private set; }
         public Transform PlayerTransform { get; private set; } = null!;
         public Rigidbody2D Rigidbody { get; private set; } = null!;
         public Animator PlayerAnimator { get; private set; } = null!;
