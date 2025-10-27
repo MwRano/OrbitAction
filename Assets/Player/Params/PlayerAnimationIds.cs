@@ -11,5 +11,6 @@ namespace Player
         public static readonly int JumpHash = Animator.StringToHash("Jump");
         public static readonly int WalkHash = Animator.StringToHash("Walk");
         public static readonly int FallHash = Animator.StringToHash("Fall");
+        public static readonly int DeathHash = Animator.StringToHash("Death");
     }
 }
