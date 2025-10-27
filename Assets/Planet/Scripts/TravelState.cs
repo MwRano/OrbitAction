@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Cysharp.Threading.Tasks;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
@@ -38,14 +37,12 @@ namespace Planet
                 .WithOnComplete(() => _isReached = true)
                 .BindToPositionXY(planet.PlanetTransform)
                 .AddTo(planet.PlanetTransform);
-
-            _player.DisableGravityAsync().Forget();
         }
 
         public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
         {
             // 到達すればdeployに遷移
-            if (_isReached && _player.IsGoalReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);
+            if (_isReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);
         }
 
         public void Exit()
