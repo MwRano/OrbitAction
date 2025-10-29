@@ -63,7 +63,6 @@ namespace Player
         /// <param name="value"></param>
         public void SetCanControl(bool value)
         {
-            Rigidbody.linearVelocity = Vector2.zero;
             _canControl = value;
         }
 
