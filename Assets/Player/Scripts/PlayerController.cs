@@ -137,12 +137,7 @@ namespace Player
             Rigidbody.linearVelocity = new Vector2(moveInput.x * _playerParams.MoveSpeed, Rigidbody.linearVelocity.y);
 
             // 向きに応じてviewの反転    
-            _spriteRenderer.flipX = moveInput.x switch
-            {
-                > 0 => false,
-                < 0 => true,
-                _ => _spriteRenderer.flipX
-            };
+            _spriteRenderer.flipX = moveInput.x < 0 || !(moveInput.x > 0) && _spriteRenderer.flipX;
             IsFacingRight = !_spriteRenderer.flipX;
         }
 
