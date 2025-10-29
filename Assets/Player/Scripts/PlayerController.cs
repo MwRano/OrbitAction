@@ -19,9 +19,9 @@ namespace Player
         private bool _canControl = true;
         private InputSystemActions _inputSystemActions = null!;
         private PlayerParam _playerParams = null!;
+        private Vector2 _respawnPosition;
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
-        private Vector2 _respawnPosition;
 
         private void Update()
         {
@@ -43,6 +43,7 @@ namespace Player
                 IsDead = true;
                 Respawn();
             }
+
             if (other.gameObject.CompareTag("Goal")) IsGoalReached = true;
         }
 
@@ -98,26 +99,26 @@ namespace Player
             // SMの初期化
             _stateMachine.Initialize(playerStateMachine.Idle, this);
         }
-        
-        
+
+
         // リスポーン位置を設定するメソッド
         public void SetRespawnPosition(Vector2 position)
         {
             _respawnPosition = position;
         }
-        
+
         private void Respawn()
         {
             Rigidbody.simulated = false;
             SetCanControl(false);
-            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ => 
+            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ =>
             {
                 transform.position = _respawnPosition;
                 Rigidbody.simulated = true;
                 SetCanControl(true);
             });
         }
-        
+
         /// <summary>
         /// 接地判定を行うメソッド
         /// </summary>
@@ -131,7 +132,6 @@ namespace Player
         private void Move()
         {
             Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
-            if (Mathf.Abs(moveInput.x) < 0.01f) return;
             Rigidbody.linearVelocity = new Vector2(moveInput.x * _playerParams.MoveSpeed, Rigidbody.linearVelocity.y);
 
             // 向きに応じてviewの反転    
