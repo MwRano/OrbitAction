@@ -131,6 +131,9 @@ namespace Player
         private void Move()
         {
             Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
+            if (moveInput.sqrMagnitude <= 0 && Rigidbody.linearVelocity.sqrMagnitude > 0)
+                return; // 外部の力で動いている場合には無入力を受け付けない
+
             Rigidbody.linearVelocity = new Vector2(moveInput.x * _playerParams.MoveSpeed, Rigidbody.linearVelocity.y);
 
             // 向きに応じてviewの反転    
