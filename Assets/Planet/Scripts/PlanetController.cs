@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
+using R3;
+using Player;
 
 namespace Planet
 {
@@ -14,6 +16,7 @@ namespace Planet
 
         private InputSystemActions _inputSystemActions = null!;
         private PlanetStateMachine _stateMachine = null!;
+        private PlayerController _player = null!;
 
         private void Awake()
         {
@@ -26,6 +29,12 @@ namespace Planet
             IsLaunched = false;
             OrbitAreaSpriteRenderer = orbitAreaView.GetComponent<SpriteRenderer>();
             _stateMachine.Initialize(_stateMachine.Follow, this);
+            
+            // playerが死亡したら発射状態を解除
+            Observable.EveryValueChanged(_player, p => p.IsDead)
+                .Where(isDead => isDead)
+                .Subscribe(_ => IsLaunched = false)
+                .AddTo(this);
         }
 
         private void Update()
@@ -41,13 +50,15 @@ namespace Planet
         [Inject]
         public void Construct(
             InputSystemActions inputSystemActions,
-            PlanetStateMachine stateMachine)
+            PlanetStateMachine stateMachine,
+            PlayerController player)
         {
             _inputSystemActions = inputSystemActions;
             _stateMachine = stateMachine;
+            _player = player;
         }
 
-        private void OnLaunch(InputAction.CallbackContext context)
+        public void OnLaunch(InputAction.CallbackContext context)
         {
             IsLaunched ^= true;
         }
