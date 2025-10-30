@@ -15,6 +15,9 @@ namespace Player
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour, IPlayerContext
     {
+        [SerializeField] private ParticleSystem moveDust = null!;
+        [SerializeField] private ParticleSystem landDust = null!;
+        
         private float _baseGravityScale;
         private bool _canControl = true;
         private InputSystemActions _inputSystemActions = null!;
@@ -22,6 +25,15 @@ namespace Player
         private Vector2 _respawnPosition;
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
+
+        private void Awake()
+        {
+            // 着地時の砂埃
+            Observable.EveryValueChanged(this, _ => IsGrounded)
+                .Where(isGrounded => isGrounded)
+                .Subscribe(_=> CreateDust(landDust))
+                .AddTo(this);
+        }
 
         private void Update()
         {
@@ -138,6 +150,10 @@ namespace Player
 
             // 向きに応じてviewの反転    
             _spriteRenderer.flipX = moveInput.x < 0 || !(moveInput.x > 0) && _spriteRenderer.flipX;
+            if (IsFacingRight == _spriteRenderer.flipX && IsGrounded) // 向きが変わったときに砂埃を発生
+            {
+                CreateDust(moveDust);
+            }
             IsFacingRight = !_spriteRenderer.flipX;
         }
 
@@ -153,6 +169,7 @@ namespace Player
 
             Rigidbody.linearVelocity = new Vector2(Rigidbody.linearVelocity.x, 0);
             Rigidbody.AddForce(Vector2.up * _playerParams.JumpForce, ForceMode2D.Impulse);
+            CreateDust(moveDust);
         }
 
         // 公転してから発射するメソッド(クリア時の演出のみ使用)
@@ -190,6 +207,11 @@ namespace Player
                     transform.position = center.position + offset;
                 })
                 .ToUniTask(cancellationToken: token);
+        }
+        
+        private void CreateDust(ParticleSystem dust)
+        {
+            dust.Play();
         }
     }
 }
