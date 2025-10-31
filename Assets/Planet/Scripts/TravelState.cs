@@ -2,8 +2,11 @@
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
+using R3;
+using R3.Triggers;
 using UnityEngine;
 using VContainer;
+using System;
 
 namespace Planet
 {
@@ -12,6 +15,8 @@ namespace Planet
         private readonly PlanetParams _planetParams;
         private readonly IPlayerContext _player;
         private bool _isReached;
+        private MotionHandle? _motionHandle;
+        private IDisposable? _triggerSubscription;
 
         [Inject]
         public TravelState(
@@ -32,11 +37,18 @@ namespace Planet
                 destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.PlayerTransform.position;
             }
 
-            LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
+            _motionHandle = LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
                 .WithEase(Ease.OutCubic)
                 .WithOnComplete(() => _isReached = true)
-                .BindToPositionXY(planet.PlanetTransform)
-                .AddTo(planet.PlanetTransform);
+                .BindToPositionXY(planet.PlanetTransform);
+
+            _triggerSubscription = planet.PlanetTransform.OnTriggerEnter2DAsObservable()
+                .Where(collision => !collision.gameObject.CompareTag("Player"))
+                .Subscribe(_ =>
+                {
+                    if (_motionHandle.HasValue) _motionHandle.Value.TryCancel();
+                    _isReached = true;
+                });
         }
 
         public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
@@ -47,6 +59,15 @@ namespace Planet
 
         public void Exit()
         {
+            if (_motionHandle.HasValue)
+            {
+                _motionHandle.Value.TryCancel();
+                _motionHandle = null;
+            }
+
+            _triggerSubscription?.Dispose();
+            _triggerSubscription = null;
+
             _isReached = false;
         }
     }
