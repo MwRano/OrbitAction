@@ -118,7 +118,7 @@ namespace Player
             _respawnPosition = position;
         }
 
-        private void Respawn()
+        public void Respawn()
         {
             Rigidbody.simulated = false;
             SetCanControl(false);
