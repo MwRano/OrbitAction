@@ -75,7 +75,7 @@ namespace Planet
         public void Orbit(Vector2 planetPosition)
         {
             // 公転範囲内にPlayerがいるか判定
-            if (!TryGetSinglePlayerInOrbitArea(planetPosition, out var playerCollider)
+            if (!TryGetOverlapCircleObject(planetPosition, _planetParams.OrbitalRange, "Player",  out var playerCollider)
                 || _isOrbiting) return;
 
             _isOrbiting = true;
@@ -98,8 +98,17 @@ namespace Planet
                     _isOrbiting = false;
                     _player.SetCanControl(false); // 一時的に操作不可にする
                     _player.Rigidbody.linearVelocity = Vector2.zero;
+                    bool isBuried = 
+                        TryGetOverlapCircleObject(_player.PlayerTransform.position, 0.1f, "Ground", out var collider);
+                    if (isBuried)
+                    {
+                        _player.IsDead = true;
+                        _player.Respawn();
+                        return;
+                    }
                     playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
                         ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
+                    
                     Observable.Timer(TimeSpan.FromSeconds(0.3f))
                         .Subscribe(_ => _player.SetCanControl(true));　// delayしてから操作可能にする
                 })
@@ -108,22 +117,23 @@ namespace Planet
         }
 
         // 公転エリア内のPlayerを取得するメソッド
-        private bool TryGetSinglePlayerInOrbitArea(Vector2 planetPosition, out Collider2D playerCollider)
+        private bool TryGetOverlapCircleObject(Vector2 centerPosition, float radius, string tag, out Collider2D collider)
         {
             Collider2D[] hitCollidersCache = new Collider2D[20];
             var filter = new ContactFilter2D();
-            filter.SetLayerMask(LayerMask.GetMask("Player"));
+            filter.SetLayerMask(LayerMask.GetMask(tag));
             filter.useTriggers = false;
-            int size = Physics2D.OverlapCircle(planetPosition, _planetParams.OrbitalRange, filter, hitCollidersCache);
-            if (size != 1)
+            int size = Physics2D.OverlapCircle(centerPosition, radius, filter, hitCollidersCache);
+            if (size == 0)
             {
-                if (size >= 2) Debug.LogError("Orbit範囲内にPlayerが複数存在します。");
-                playerCollider = null!;
+                collider = null!;
                 return false;
             }
 
-            playerCollider = hitCollidersCache[0];
+            collider = hitCollidersCache[0];
             return true;
         }
+        
+        
     }
 }
