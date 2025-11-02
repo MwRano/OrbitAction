@@ -12,12 +12,23 @@ namespace Player
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
         {
-            stateMachine.TransitionTo(stateMachine.Idle, playerContext);
+            if (playerContext.IsGrounded)
+            {
+                stateMachine.TransitionTo(stateMachine.Idle, playerContext);
+            }
+            else
+            {
+                // Fallへの遷移
+                if (playerContext.Rigidbody.linearVelocityY < 0f)
+                {
+                    stateMachine.TransitionTo(stateMachine.Fall, playerContext);
+                }
+            }
         }
 
-        public void Exit()
+        public void Exit(IPlayerContext playerContext)
         {
-            
+            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.DeathHash);
         }
     }
 }
