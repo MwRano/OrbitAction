@@ -40,7 +40,7 @@ namespace Player
 
         public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
         {
-            _currentState.Exit();
+            _currentState.Exit(playerContext);
             _currentState = nextState;
             nextState.Enter(playerContext);
         }

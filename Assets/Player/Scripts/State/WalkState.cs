@@ -5,8 +5,8 @@ namespace Player
 {
     public class WalkState : IPlayerState
     {
-        const float VerticalThreshold = 0.1f;
-        const float HorizontalIdleThreshold = 0.1f;
+        const float VerticalThreshold = 0;
+        const float HorizontalIdleThreshold = 0;
 
         public void Enter(IPlayerContext playerContext)
         {
@@ -24,11 +24,11 @@ namespace Player
             if (TryHandleAirTransition(playerContext, stateMachine)) return;
 
             if (TryHandleIdleTransition(playerContext, stateMachine)) return;
-            
         }
 
-        public void Exit()
+        public void Exit(IPlayerContext playerContext)
         {
+            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.WalkHash);
         }
 
         private static bool ShouldTransitionToDeath(IPlayerContext ctx) => ctx.IsDead;
@@ -57,6 +57,7 @@ namespace Player
                 sm.TransitionTo(sm.Idle, ctx);
                 return true;
             }
+
             return false;
         }
     }

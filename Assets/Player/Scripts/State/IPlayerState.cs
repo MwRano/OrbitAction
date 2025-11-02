@@ -4,6 +4,6 @@ namespace Player
     {
         public void Enter(IPlayerContext playerContext);
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine);
-        public void Exit();
+        public void Exit(IPlayerContext playerContext);
     }
 }
