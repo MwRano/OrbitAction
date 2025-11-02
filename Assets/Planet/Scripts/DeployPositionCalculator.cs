@@ -22,15 +22,12 @@ namespace Planet
 
         public Vector2 Calculate(Vector2 playerPos, Vector2 playerLookDir, Vector2 planetPos, float planetRadius)
         {
-            var hit = Physics2D.Raycast(
-                playerPos,
-                playerLookDir,
-                100,　// 十分に大きな値
-                _playerParam.GroundLayer);
+            var hit = Physics2D.Raycast(playerPos, playerLookDir, 100,　_playerParam.GroundLayer);
             Vector2 target = hit.point;
 
+            // 三角形の相似を利用して補正量を計算
             Vector2 planetToHitDir = (hit.point - planetPos).normalized;
-            float planetTohitDist = Vector2.Distance(hit.point, planetPos);
+            float planetToHitDist = Vector2.Distance(hit.point, planetPos);
 
             float distToGround = Math.Abs(hit.normal.x) > Math.Abs(hit.normal.y)
                 ? Mathf.Abs(hit.point.x - planetPos.x)
@@ -38,10 +35,10 @@ namespace Planet
             if (distToGround == 0) return target;
 
             // 壁や地面にplanetがめり込まないように補正
-            target = hit.point + -planetToHitDir * (planetRadius * (planetTohitDist / distToGround));
+            target = hit.point + -planetToHitDir * (planetRadius * (planetToHitDist / distToGround));
 
-            // 発射可能距離を超えていたら補正
-            if (Vector2.Distance(target, playerPos) > _planetParams.LaunchDistance)
+            // 発射可能距離を超えていたら or 壁に到達しないときに補正
+            if (Vector2.Distance(target, playerPos) > _planetParams.LaunchDistance || !hit)
             {
                 target = playerPos + playerLookDir * _planetParams.LaunchDistance;
             }
