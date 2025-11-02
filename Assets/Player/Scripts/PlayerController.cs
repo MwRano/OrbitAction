@@ -17,7 +17,7 @@ namespace Player
     {
         [SerializeField] private ParticleSystem moveDust = null!;
         [SerializeField] private ParticleSystem landDust = null!;
-        
+
         private float _baseGravityScale;
         private bool _canControl = true;
         private InputSystemActions _inputSystemActions = null!;
@@ -31,7 +31,7 @@ namespace Player
             // 着地時の砂埃
             Observable.EveryValueChanged(this, _ => IsGrounded)
                 .Where(isGrounded => isGrounded)
-                .Subscribe(_=> CreateDust(landDust))
+                .Subscribe(_ => CreateDust(landDust))
                 .AddTo(this);
         }
 
@@ -47,8 +47,25 @@ namespace Player
             Look();
         }
 
+        private void OnDrawGizmos()
+        {
+            // _playerParams が未設定ならデフォルト値を使用
+            Vector2 offset = _playerParams != null ? _playerParams.GroundCheckOffset : Vector2.down * 0.5f;
+            float radius = _playerParams != null ? _playerParams.GroundCheckRadius : 0.1f;
+
+            Vector3 checkPos = (Vector2)transform.position + offset;
+
+            // 実行中は IsGrounded に応じて色を変える。エディタ表示は黄色。
+            Gizmos.color = Application.isPlaying ? (IsGrounded ? Color.green : Color.red) : Color.yellow;
+            Gizmos.DrawWireSphere(checkPos, radius);
+
+            // プレイヤー位置から判定点への線を描く
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(transform.position, checkPos);
+        }
+
         // 接触判定
-        private void OnCollisionEnter2D(Collision2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("DeadZone"))
             {
@@ -86,6 +103,18 @@ namespace Player
             Rigidbody.simulated = isSimulated;
         }
 
+        public void Respawn()
+        {
+            Rigidbody.simulated = false;
+            SetCanControl(false);
+            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ =>
+            {
+                transform.position = _respawnPosition;
+                Rigidbody.simulated = true;
+                SetCanControl(true);
+            });
+        }
+
         [Inject]
         public void Construct(
             InputSystemActions inputSystemActions,
@@ -118,18 +147,6 @@ namespace Player
             _respawnPosition = position;
         }
 
-        public void Respawn()
-        {
-            Rigidbody.simulated = false;
-            SetCanControl(false);
-            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ =>
-            {
-                transform.position = _respawnPosition;
-                Rigidbody.simulated = true;
-                SetCanControl(true);
-            });
-        }
-
         /// <summary>
         /// 接地判定を行うメソッド
         /// </summary>
@@ -154,6 +171,7 @@ namespace Player
             {
                 CreateDust(moveDust);
             }
+
             IsFacingRight = !_spriteRenderer.flipX;
         }
 
@@ -208,7 +226,7 @@ namespace Player
                 })
                 .ToUniTask(cancellationToken: token);
         }
-        
+
         private void CreateDust(ParticleSystem dust)
         {
             dust.Play();
