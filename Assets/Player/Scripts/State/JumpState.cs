@@ -13,34 +13,32 @@ namespace Player
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
         {
             // Deathへの遷移
-            if(playerContext.IsDead) 
+            if (playerContext.IsDead)
             {
                 stateMachine.TransitionTo(stateMachine.Death, playerContext);
             }
-            
+
             if (playerContext.IsGrounded)
             {
                 // Walkへの遷移
-                if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0.1f)
+                if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0)
                 {
                     stateMachine.TransitionTo(stateMachine.Walk, playerContext);
                 }
-                // Idleへの遷移
-                else
-                {
-                    stateMachine.TransitionTo(stateMachine.Idle, playerContext);
-                }
             }
-
-            // Fallへの遷移
-            if (playerContext.Rigidbody.linearVelocityY < -0.1f)
+            else
             {
-                stateMachine.TransitionTo(stateMachine.Fall, playerContext);
+                // Fallへの遷移
+                if (playerContext.Rigidbody.linearVelocityY < 0)
+                {
+                    stateMachine.TransitionTo(stateMachine.Fall, playerContext);
+                }
             }
         }
 
-        public void Exit()
+        public void Exit(IPlayerContext playerContext)
         {
+            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.JumpHash);
         }
     }
 }
