@@ -15,8 +15,8 @@ namespace Planet
         [SerializeField] private GameObject orbitAreaView = null!;
 
         private InputSystemActions _inputSystemActions = null!;
-        private PlanetStateMachine _stateMachine = null!;
         private PlayerController _player = null!;
+        private PlanetStateMachine _stateMachine = null!;
 
         private void Awake()
         {
@@ -29,7 +29,7 @@ namespace Planet
             IsLaunched = false;
             OrbitAreaSpriteRenderer = orbitAreaView.GetComponent<SpriteRenderer>();
             _stateMachine.Initialize(_stateMachine.Follow, this);
-            
+
             // playerが死亡したら発射状態を解除
             Observable.EveryValueChanged(_player, p => p.IsDead)
                 .Where(isDead => isDead)
@@ -43,6 +43,7 @@ namespace Planet
         }
 
         public Transform PlanetTransform { get; private set; } = null!;
+        public SpriteRenderer PlanetSpriteRenderer => GetComponent<SpriteRenderer>();
         public bool IsLaunched { get; private set; }
         public SpriteRenderer OrbitAreaSpriteRenderer { get; private set; } = null!;
         public GameObject OrbitAreaView => orbitAreaView;

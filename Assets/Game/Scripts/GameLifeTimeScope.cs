@@ -35,6 +35,8 @@ namespace Game
 
             // Planet
             builder.RegisterComponentInHierarchy<PlanetController>().As<IPlanetContext>().AsSelf();
+            builder.RegisterComponentInHierarchy<PlanetGuide>();
+            builder.Register<DeployPositionCalculator>(Lifetime.Scoped);
             builder.Register<PlanetStateMachine>(Lifetime.Scoped);
             builder.Register<HoverState>(Lifetime.Scoped);
             builder.Register<FollowState>(Lifetime.Scoped);

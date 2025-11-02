@@ -2,53 +2,51 @@
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
-using R3;
-using R3.Triggers;
 using UnityEngine;
 using VContainer;
-using System;
 
 namespace Planet
 {
     public class TravelState : IPlanetState
     {
+        private readonly DeployPositionCalculator _deployPositionCalculator;
         private readonly PlanetParams _planetParams;
         private readonly IPlayerContext _player;
         private bool _isReached;
-        private MotionHandle? _motionHandle;
-        private IDisposable? _triggerSubscription;
 
         [Inject]
         public TravelState(
             IPlayerContext player,
-            PlanetParams planetParams)
+            PlanetParams planetParams,
+            DeployPositionCalculator deployPositionCalculator)
         {
             _player = player;
             _planetParams = planetParams;
+            _deployPositionCalculator = deployPositionCalculator;
         }
 
         public void Enter(IPlanetContext planet)
         {
             // 移動モーション 
-            Vector2 destPos = _planetParams.LaunchDistance * _player.LookingDirection +
-                              (Vector2)_player.PlayerTransform.position;
+            float planetRadius = planet.PlanetSpriteRenderer.bounds.extents.x;
+            Vector2 destPos = _deployPositionCalculator.Calculate(
+                _player.PlayerTransform.position,
+                _player.LookingDirection,
+                planet.PlanetTransform.position,
+                planetRadius
+            );
+
             if (_player.IsGoalReached)
             {
                 destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.PlayerTransform.position;
             }
 
-            _motionHandle = LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
+            // deply地点にlaunch
+            LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
                 .WithEase(Ease.OutCubic)
                 .WithOnComplete(() => _isReached = true)
-                .BindToPositionXY(planet.PlanetTransform);
-
-            _triggerSubscription = planet.PlanetTransform.OnTriggerEnter2DAsObservable()
-                .Where(collision => !collision.gameObject.CompareTag("Player"))
-                .Subscribe(_ =>
-                {
-                    if (_motionHandle.HasValue) _motionHandle.Value.TryCancel();
-                    _isReached = true;
-                });
+                .BindToPositionXY(planet.PlanetTransform)
+                .AddTo(planet.PlanetTransform);
         }
 
         public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
@@ -59,15 +57,6 @@ namespace Planet
 
         public void Exit()
         {
-            if (_motionHandle.HasValue)
-            {
-                _motionHandle.Value.TryCancel();
-                _motionHandle = null;
-            }
-
-            _triggerSubscription?.Dispose();
-            _triggerSubscription = null;
-
             _isReached = false;
         }
     }
