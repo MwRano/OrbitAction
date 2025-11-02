@@ -75,7 +75,7 @@ namespace Planet
         public void Orbit(Vector2 planetPosition)
         {
             // 公転範囲内にPlayerがいるか判定
-            if (!TryGetOverlapCircleObject(planetPosition, _planetParams.OrbitalRange, "Player",  out var playerCollider)
+            if (!TryGetOverlapCircleObject(planetPosition, _planetParams.OrbitalRange, "Player", out var playerCollider)
                 || _isOrbiting) return;
 
             _isOrbiting = true;
@@ -90,15 +90,16 @@ namespace Planet
                 .AddTo(_handles);
 
             // 拡大縮小モーション(手前に公転してるイメージ)
+            _player.SetIsSimulated(false);
             LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 1.5f, 0.3f)
                 .WithLoops(2, LoopType.Yoyo)
                 .WithEase(Ease.Linear)
                 .WithOnComplete(() =>
                 {
                     _isOrbiting = false;
-                    _player.SetCanControl(false); // 一時的に操作不可にする
+                    _player.SetIsSimulated(true);
                     _player.Rigidbody.linearVelocity = Vector2.zero;
-                    bool isBuried = 
+                    bool isBuried =
                         TryGetOverlapCircleObject(_player.PlayerTransform.position, 0.1f, "Ground", out var collider);
                     if (isBuried)
                     {
@@ -106,18 +107,17 @@ namespace Planet
                         _player.Respawn();
                         return;
                     }
+
                     playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
                         ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
-                    
-                    Observable.Timer(TimeSpan.FromSeconds(0.3f))
-                        .Subscribe(_ => _player.SetCanControl(true));　// delayしてから操作可能にする
                 })
                 .BindToLocalScale(_player.PlayerTransform)
                 .AddTo(_handles);
         }
 
         // 公転エリア内のPlayerを取得するメソッド
-        private bool TryGetOverlapCircleObject(Vector2 centerPosition, float radius, string tag, out Collider2D collider)
+        private bool TryGetOverlapCircleObject(Vector2 centerPosition, float radius, string tag,
+            out Collider2D collider)
         {
             Collider2D[] hitCollidersCache = new Collider2D[20];
             var filter = new ContactFilter2D();
@@ -133,7 +133,5 @@ namespace Planet
             collider = hitCollidersCache[0];
             return true;
         }
-        
-        
     }
 }
