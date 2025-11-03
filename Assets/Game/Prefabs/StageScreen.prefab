@@ -2577,3 +2577,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 7823093279122053961}
   respawnPoint: {fileID: 5625867453996970571}
+  impulseSource: {fileID: 4415429412807932810}
