@@ -4208,6 +4208,10 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: -0.13199586
       objectReference: {fileID: 0}
+    - target: {fileID: 2605857217368536997, guid: f171b0f179a2e45d8be4a762490955e8, type: 3}
+      propertyPath: camera
+      value: 
+      objectReference: {fileID: 519420031}
     - target: {fileID: 3261505145923687637, guid: f171b0f179a2e45d8be4a762490955e8, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.741
