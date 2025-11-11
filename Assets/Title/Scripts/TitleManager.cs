@@ -17,7 +17,7 @@ namespace Title
         public void Construct(
             InputSystemActions inputSystemActions)
         {
-            inputSystemActions.Planet.Attract.performed += OnStartButtonPressed;
+            inputSystemActions.Planet.Orbit.performed += OnStartButtonPressed;
             inputSystemActions.Planet.Enable();
         }
         
