@@ -15,6 +15,7 @@ namespace Player
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour, IPlayerContext
     {
+        [SerializeField] private Camera camera = null!;
         [SerializeField] private ParticleSystem moveDust = null!;
         [SerializeField] private ParticleSystem landDust = null!;
 
@@ -43,8 +44,7 @@ namespace Player
 
         private void FixedUpdate()
         {
-            if (_canControl) Move();
-            Look();
+            Move();
         }
 
         private void OnDrawGizmos()
@@ -133,14 +133,15 @@ namespace Player
 
             // InputSystemへのメソッド登録
             _inputSystemActions.Player.Jump.performed += Jump;
+            _inputSystemActions.Player.Look.performed += Look;
+            _inputSystemActions.Player.Aim.performed += Aim;
             _inputSystemActions.Player.Enable();
             IsFacingRight = _spriteRenderer.flipX;
 
             // SMの初期化
             _stateMachine.Initialize(playerStateMachine.Idle, this);
         }
-
-
+        
         // リスポーン位置を設定するメソッド
         public void SetRespawnPosition(Vector2 position)
         {
@@ -159,6 +160,8 @@ namespace Player
 
         private void Move()
         {
+            if (!_canControl) return;
+
             Vector2 moveInput = _inputSystemActions.Player.Move.ReadValue<Vector2>();
             if (moveInput.sqrMagnitude <= 0 && Rigidbody.linearVelocity.sqrMagnitude > 0)
                 return; // 外部の力で動いている場合には無入力を受け付けない
@@ -175,10 +178,22 @@ namespace Player
             IsFacingRight = !_spriteRenderer.flipX;
         }
 
-        private void Look()
+        private void Look(InputAction.CallbackContext context)
         {
-            Vector2 lookInput = _inputSystemActions.Player.Look.ReadValue<Vector2>();
-            if (lookInput.sqrMagnitude > 0.1f) LookingDirection = lookInput.normalized;
+            Vector2 lookInput = context.ReadValue<Vector2>();
+            if (lookInput.sqrMagnitude <= 0.1f) return;
+            LookingDirection = lookInput.normalized;
+        }
+
+        private void Aim(InputAction.CallbackContext context)
+        {
+            Vector2 aimInput = context.ReadValue<Vector2>();
+            float z = camera.WorldToScreenPoint(transform.position).z;
+            Vector3 mouseScreen = new Vector3(aimInput.x, aimInput.y, z);
+            Vector3 mouseWorld = camera.ScreenToWorldPoint(mouseScreen);
+
+            Vector2 dir = mouseWorld - transform.position;
+            if (dir.sqrMagnitude > 0.01f) LookingDirection = dir.normalized;
         }
 
         private void Jump(InputAction.CallbackContext context)
