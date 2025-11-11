@@ -1005,15 +1005,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             ""id"": ""9207d096-ba08-4943-b25d-8896b4ecaa1a"",
             ""actions"": [
                 {
-                    ""name"": ""Attract"",
-                    ""type"": ""Button"",
-                    ""id"": ""e51c1a58-9971-4cc1-9bb0-e1976ed015aa"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Launch"",
                     ""type"": ""Button"",
                     ""id"": ""7b071fcd-21a6-43bc-a3b8-b5ca4f801926"",
@@ -1035,55 +1026,11 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""bd9f0c2c-079c-4378-a2a6-a2a8aa9311e6"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Attract"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""35d0dc77-d267-403d-a54c-b1a5d4ac8522"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Attract"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""21f25958-f734-47f3-bd76-49e6ef815b87"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""Attract"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""86b01cfc-9cf7-4caf-9b98-e1eb5889de21"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""Attract"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""76bd3fc8-7cf2-457f-be40-c25e0da73ef1"",
                     ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Launch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1091,10 +1038,21 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f97454ad-2ac8-461c-9953-5eb0bf77f5b9"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Launch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0da1d680-2435-4247-a68e-315807deba62"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Launch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1102,10 +1060,10 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""8aaf35bc-c70d-4759-987a-a1c667710413"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Orbit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1113,10 +1071,32 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""908696a5-f5d8-44ab-98b7-a1a1799e88f3"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Orbit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ad90eaa6-a241-491d-8e3d-b4b508883012"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Orbit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""df708740-7f0d-44de-975d-bd1be6fcb008"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Orbit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1212,7 +1192,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         // Planet
         m_Planet = asset.FindActionMap("Planet", throwIfNotFound: true);
-        m_Planet_Attract = m_Planet.FindAction("Attract", throwIfNotFound: true);
         m_Planet_Launch = m_Planet.FindAction("Launch", throwIfNotFound: true);
         m_Planet_Orbit = m_Planet.FindAction("Orbit", throwIfNotFound: true);
     }
@@ -1676,7 +1655,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
     // Planet
     private readonly InputActionMap m_Planet;
     private List<IPlanetActions> m_PlanetActionsCallbackInterfaces = new List<IPlanetActions>();
-    private readonly InputAction m_Planet_Attract;
     private readonly InputAction m_Planet_Launch;
     private readonly InputAction m_Planet_Orbit;
     /// <summary>
@@ -1690,10 +1668,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
         public PlanetActions(@InputSystemActions wrapper) { m_Wrapper = wrapper; }
-        /// <summary>
-        /// Provides access to the underlying input action "Planet/Attract".
-        /// </summary>
-        public InputAction @Attract => m_Wrapper.m_Planet_Attract;
         /// <summary>
         /// Provides access to the underlying input action "Planet/Launch".
         /// </summary>
@@ -1728,9 +1702,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlanetActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlanetActionsCallbackInterfaces.Add(instance);
-            @Attract.started += instance.OnAttract;
-            @Attract.performed += instance.OnAttract;
-            @Attract.canceled += instance.OnAttract;
             @Launch.started += instance.OnLaunch;
             @Launch.performed += instance.OnLaunch;
             @Launch.canceled += instance.OnLaunch;
@@ -1748,9 +1719,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// <seealso cref="PlanetActions" />
         private void UnregisterCallbacks(IPlanetActions instance)
         {
-            @Attract.started -= instance.OnAttract;
-            @Attract.performed -= instance.OnAttract;
-            @Attract.canceled -= instance.OnAttract;
             @Launch.started -= instance.OnLaunch;
             @Launch.performed -= instance.OnLaunch;
             @Launch.canceled -= instance.OnLaunch;
@@ -2011,13 +1979,6 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
     /// <seealso cref="PlanetActions.RemoveCallbacks(IPlanetActions)" />
     public interface IPlanetActions
     {
-        /// <summary>
-        /// Method invoked when associated input action "Attract" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttract(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Launch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
