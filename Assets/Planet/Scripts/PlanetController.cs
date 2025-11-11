@@ -22,7 +22,7 @@ namespace Planet
         {
             // InputSystemへのメソッド登録
             _inputSystemActions.Planet.Launch.performed += OnLaunch;
-            _inputSystemActions.Planet.Attract.performed += OnOrbit;
+            _inputSystemActions.Planet.Orbit.performed += OnOrbit;
             _inputSystemActions.Planet.Enable();
 
             PlanetTransform = transform;
