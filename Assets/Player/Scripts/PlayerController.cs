@@ -84,8 +84,7 @@ namespace Player
         public bool IsGrounded { get; private set; }
         public bool IsFacingRight { get; private set; }
         public Vector2 LookingDirection { get; private set; }
-
-
+        
         /// <summary>
         /// playerの操作が可能かどうかを設定するメソッド
         /// </summary>
@@ -103,7 +102,7 @@ namespace Player
             Rigidbody.simulated = isSimulated;
         }
 
-        public void Respawn()
+        private void Respawn()
         {
             Rigidbody.simulated = false;
             SetCanControl(false);
@@ -113,6 +112,25 @@ namespace Player
                 Rigidbody.simulated = true;
                 SetCanControl(true);
             });
+        }
+
+        public void HandleBuried()
+        {
+            var isBuried = Physics2D.OverlapCircle(
+                transform.position, 
+                _playerParams.GroundCheckRadius, 
+                _playerParams.GroundLayer);
+            if (!isBuried) return;
+
+            IsDead = true;
+            Respawn();
+        }
+
+        public void AddImpulse(Vector2 toPos)
+        {
+            SetIsSimulated(true);
+            Rigidbody.linearVelocity = Vector2.zero;
+            Rigidbody.AddForce(toPos, ForceMode2D.Impulse);
         }
 
         [Inject]
