@@ -84,7 +84,7 @@ namespace Player
         public bool IsGrounded { get; private set; }
         public bool IsFacingRight { get; private set; }
         public Vector2 LookingDirection { get; private set; }
-        
+
         /// <summary>
         /// playerの操作が可能かどうかを設定するメソッド
         /// </summary>
@@ -102,23 +102,11 @@ namespace Player
             Rigidbody.simulated = isSimulated;
         }
 
-        private void Respawn()
-        {
-            Rigidbody.simulated = false;
-            SetCanControl(false);
-            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ =>
-            {
-                transform.position = _respawnPosition;
-                Rigidbody.simulated = true;
-                SetCanControl(true);
-            });
-        }
-
         public void HandleBuried()
         {
             var isBuried = Physics2D.OverlapCircle(
-                transform.position, 
-                _playerParams.GroundCheckRadius, 
+                transform.position,
+                _playerParams.GroundCheckRadius,
                 _playerParams.GroundLayer);
             if (!isBuried) return;
 
@@ -131,6 +119,21 @@ namespace Player
             SetIsSimulated(true);
             Rigidbody.linearVelocity = Vector2.zero;
             Rigidbody.AddForce(toPos, ForceMode2D.Impulse);
+        }
+
+        public event Action OnRespawn = delegate { };
+
+        private void Respawn()
+        {
+            Rigidbody.simulated = false;
+            SetCanControl(false);
+            Observable.Timer(TimeSpan.FromSeconds(0.6f)).Subscribe(_ =>
+            {
+                transform.position = _respawnPosition;
+                Rigidbody.simulated = true;
+                SetCanControl(true);
+                OnRespawn?.Invoke();
+            });
         }
 
         [Inject]
@@ -159,7 +162,7 @@ namespace Player
             // SMの初期化
             _stateMachine.Initialize(playerStateMachine.Idle, this);
         }
-        
+
         // リスポーン位置を設定するメソッド
         public void SetRespawnPosition(Vector2 position)
         {
