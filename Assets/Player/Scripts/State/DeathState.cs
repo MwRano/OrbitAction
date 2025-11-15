@@ -7,12 +7,12 @@ namespace Player
     public class DeathState : IPlayerState
     {
         private readonly CinemachineImpulseSource _impulseSource;
-        
+
         public DeathState(CinemachineImpulseSource impulseSource)
         {
             _impulseSource = impulseSource;
         }
-        
+
         public void Enter(IPlayerContext playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
@@ -38,7 +38,6 @@ namespace Player
 
         public void Exit(IPlayerContext playerContext)
         {
-            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.DeathHash);
         }
     }
 }
