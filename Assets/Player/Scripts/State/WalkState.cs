@@ -5,8 +5,8 @@ namespace Player
 {
     public class WalkState : IPlayerState
     {
-        const float VerticalThreshold = 0;
-        const float HorizontalIdleThreshold = 0;
+        const float VerticalThreshold = 0.1f;
+        const float HorizontalIdleThreshold = 0.1f;
 
         public void Enter(IPlayerContext playerContext)
         {
