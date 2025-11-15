@@ -11,12 +11,12 @@ namespace Planet
     {
         private readonly DeployPositionCalculator _deployPositionCalculator;
         private readonly PlanetParams _planetParams;
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private bool _isReached;
 
         [Inject]
         public TravelState(
-            IPlayerContext player,
+            PlayerController player,
             PlanetParams planetParams,
             DeployPositionCalculator deployPositionCalculator)
         {
@@ -25,7 +25,7 @@ namespace Planet
             _deployPositionCalculator = deployPositionCalculator;
         }
 
-        public void Enter(IPlanetContext planet)
+        public void Enter(PlanetController planet)
         {
             // 移動モーション 
             float planetRadius = planet.PlanetSpriteRenderer.bounds.extents.x;
@@ -49,7 +49,7 @@ namespace Planet
                 .AddTo(planet.PlanetTransform);
         }
 
-        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             // 到達すればdeployに遷移
             if (_isReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);

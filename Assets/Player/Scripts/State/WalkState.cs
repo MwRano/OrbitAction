@@ -8,12 +8,12 @@ namespace Player
         const float VerticalThreshold = 0.1f;
         const float HorizontalIdleThreshold = 0.1f;
 
-        public void Enter(IPlayerContext playerContext)
+        public void Enter(PlayerController playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.WalkHash);
         }
 
-        public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
+        public void Update(PlayerController playerContext, PlayerStateMachine stateMachine)
         {
             if (ShouldTransitionToDeath(playerContext))
             {
@@ -26,14 +26,14 @@ namespace Player
             if (TryHandleIdleTransition(playerContext, stateMachine)) return;
         }
 
-        public void Exit(IPlayerContext playerContext)
+        public void Exit(PlayerController playerContext)
         {
             playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.WalkHash);
         }
 
-        private static bool ShouldTransitionToDeath(IPlayerContext ctx) => ctx.IsDead;
+        private static bool ShouldTransitionToDeath(PlayerController ctx) => ctx.IsDead;
 
-        private static bool TryHandleAirTransition(IPlayerContext ctx, PlayerStateMachine sm)
+        private static bool TryHandleAirTransition(PlayerController ctx, PlayerStateMachine sm)
         {
             if (ctx.IsGrounded) return false;
 
@@ -50,7 +50,7 @@ namespace Player
             }
         }
 
-        private static bool TryHandleIdleTransition(IPlayerContext ctx, PlayerStateMachine sm)
+        private static bool TryHandleIdleTransition(PlayerController ctx, PlayerStateMachine sm)
         {
             if (Mathf.Abs(ctx.Rigidbody.linearVelocityX) < HorizontalIdleThreshold)
             {

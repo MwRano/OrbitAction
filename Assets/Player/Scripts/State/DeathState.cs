@@ -13,30 +13,30 @@ namespace Player
             _impulseSource = impulseSource;
         }
 
-        public void Enter(IPlayerContext playerContext)
+        public void Enter(PlayerController player)
         {
-            playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
-            playerContext.IsDead = false;
+            player.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
+            player.IsDead = false;
             _impulseSource.GenerateImpulse();
         }
 
-        public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
+        public void Update(PlayerController player, PlayerStateMachine stateMachine)
         {
-            if (playerContext.IsGrounded)
+            if (player.IsGrounded)
             {
-                stateMachine.TransitionTo(stateMachine.Idle, playerContext);
+                stateMachine.TransitionTo(stateMachine.Idle, player);
             }
             else
             {
                 // Fallへの遷移
-                if (playerContext.Rigidbody.linearVelocityY < 0f)
+                if (player.Rigidbody.linearVelocityY < 0f)
                 {
-                    stateMachine.TransitionTo(stateMachine.Fall, playerContext);
+                    stateMachine.TransitionTo(stateMachine.Fall, player);
                 }
             }
         }
 
-        public void Exit(IPlayerContext playerContext)
+        public void Exit(PlayerController player)
         {
         }
     }

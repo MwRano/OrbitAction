@@ -8,16 +8,16 @@ namespace Planet
 {
     public class HoverState : IPlanetState
     {
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private MotionHandle _floatingMotion;
 
         [Inject]
-        public HoverState(IPlayerContext player)
+        public HoverState(PlayerController player)
         {
             _player = player;
         }
 
-        public void Enter(IPlanetContext planet)
+        public void Enter(PlanetController planet)
         {
             _floatingMotion = LMotion
                 .Create(planet.PlanetTransform.position.y, planet.PlanetTransform.position.y - 0.2f, 1f)
@@ -27,7 +27,7 @@ namespace Planet
                 .AddTo(planet.PlanetTransform);
         }
 
-        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
             if (_player.Rigidbody.linearVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移

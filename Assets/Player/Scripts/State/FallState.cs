@@ -5,12 +5,12 @@ namespace Player
 {
     public class FallState : IPlayerState
     {
-        public void Enter(IPlayerContext playerContext)
+        public void Enter(PlayerController playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.FallHash);
         }
 
-        public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
+        public void Update(PlayerController playerContext, PlayerStateMachine stateMachine)
         {
             // Deathへの遷移
             if (playerContext.IsDead)
@@ -39,7 +39,7 @@ namespace Player
             }
         }
 
-        public void Exit(IPlayerContext playerContext)
+        public void Exit(PlayerController playerContext)
         {
             playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.FallHash);
         }

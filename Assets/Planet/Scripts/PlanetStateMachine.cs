@@ -27,20 +27,20 @@ namespace Planet
         public TravelState Travel { get; }
         public DeployState Deploy { get; }
 
-        public void Initialize(IPlanetState startingState, IPlanetContext planet)
+        public void Initialize(IPlanetState startingState, PlanetController planet)
         {
             CurrentState = startingState;
             startingState.Enter(planet);
         }
 
-        public void TransitionTo(IPlanetState nextState, IPlanetContext planet)
+        public void TransitionTo(IPlanetState nextState, PlanetController planet)
         {
             CurrentState.Exit();
             CurrentState = nextState;
             nextState.Enter(planet);
         }
 
-        public void Update(IPlanetContext planet)
+        public void Update(PlanetController planet)
         {
             CurrentState.Update(planet, this);
         }

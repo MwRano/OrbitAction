@@ -2,8 +2,8 @@ namespace Player
 {
     public interface IPlayerState
     {
-        public void Enter(IPlayerContext playerContext);
-        public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine);
-        public void Exit(IPlayerContext playerContext);
+        public void Enter(PlayerController player);
+        public void Update(PlayerController player, PlayerStateMachine stateMachine);
+        public void Exit(PlayerController player);
     }
 }

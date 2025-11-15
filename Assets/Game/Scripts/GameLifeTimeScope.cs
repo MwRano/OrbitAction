@@ -27,7 +27,7 @@ namespace Game
             builder.Register<InputSystemActions>(Lifetime.Scoped);
 
             // Player
-            builder.RegisterComponentInHierarchy<PlayerController>().As<IPlayerContext>().AsSelf();
+            builder.RegisterComponentInHierarchy<PlayerController>();
             builder.Register<PlayerStateMachine>(Lifetime.Scoped);
             builder.Register<IdleState>(Lifetime.Scoped);
             builder.Register<WalkState>(Lifetime.Scoped);
@@ -36,7 +36,7 @@ namespace Game
             builder.Register<DeathState>(Lifetime.Scoped);
 
             // Planet
-            builder.RegisterComponentInHierarchy<PlanetController>().As<IPlanetContext>().AsSelf();
+            builder.RegisterComponentInHierarchy<PlanetController>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);
             builder.Register<PlanetStateMachine>(Lifetime.Scoped);

@@ -10,20 +10,20 @@ namespace Planet
     public class FollowState : IPlanetState
     {
         private readonly float _maxSpeed;
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private readonly float _smoothTime;
         private Vector2 _currentVelocity;
         private MotionHandle _rotationMotion;
 
         [Inject]
-        public FollowState(IPlayerContext player, PlanetParams planetParams)
+        public FollowState(PlayerController player, PlanetParams planetParams)
         {
             _player = player;
             _smoothTime = planetParams.SmoothTime;
             _maxSpeed = planetParams.MaxSpeed;
         }
 
-        public void Enter(IPlanetContext planet)
+        public void Enter(PlanetController planet)
         {
             if (_rotationMotion.IsActive()) return;
 
@@ -34,7 +34,7 @@ namespace Planet
                 .AddTo(planet.PlanetTransform);
         }
 
-        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             Vector2 playerPos = _player.PlayerTransform.position;
             Vector2 targetPosition = _player.IsFacingRight　// playerの向きに応じて追従位置を変更

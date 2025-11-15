@@ -10,13 +10,19 @@ namespace Planet
     /// <summary>
     /// Planetの挙動を制御するクラス
     /// </summary>
-    public class PlanetController : MonoBehaviour, IPlanetContext
+    public class PlanetController : MonoBehaviour
     {
         [SerializeField] private GameObject orbitAreaView = null!;
 
         private InputSystemActions _inputSystemActions = null!;
         private PlayerController _player = null!;
         private PlanetStateMachine _stateMachine = null!;
+
+        public Transform PlanetTransform { get; private set; } = null!;
+        public SpriteRenderer PlanetSpriteRenderer => GetComponent<SpriteRenderer>();
+        public bool IsLaunched { get; private set; }
+        public SpriteRenderer OrbitAreaSpriteRenderer { get; private set; } = null!;
+        public GameObject OrbitAreaView => orbitAreaView;
 
         private void Awake()
         {
@@ -41,12 +47,6 @@ namespace Planet
         {
             _stateMachine.Update(this);
         }
-
-        public Transform PlanetTransform { get; private set; } = null!;
-        public SpriteRenderer PlanetSpriteRenderer => GetComponent<SpriteRenderer>();
-        public bool IsLaunched { get; private set; }
-        public SpriteRenderer OrbitAreaSpriteRenderer { get; private set; } = null!;
-        public GameObject OrbitAreaView => orbitAreaView;
 
         [Inject]
         public void Construct(
