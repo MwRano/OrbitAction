@@ -1,13 +1,23 @@
 #nullable enable
 
+using Unity.Cinemachine;
+
 namespace Player
 {
     public class DeathState : IPlayerState
     {
+        private readonly CinemachineImpulseSource _impulseSource;
+        
+        public DeathState(CinemachineImpulseSource impulseSource)
+        {
+            _impulseSource = impulseSource;
+        }
+        
         public void Enter(IPlayerContext playerContext)
         {
             playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
             playerContext.IsDead = false;
+            _impulseSource.GenerateImpulse();
         }
 
         public void Update(IPlayerContext playerContext, PlayerStateMachine stateMachine)
