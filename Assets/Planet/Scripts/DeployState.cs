@@ -29,7 +29,7 @@ namespace Planet
             _planetParams = planetParams;
         }
 
-        public void Enter(IPlanetContext planet)
+        public void Enter(PlanetController planet)
         {
             // 浮遊モーション
             _floatingMotion = LMotion
@@ -51,7 +51,7 @@ namespace Planet
                 .AddTo(_handles);
         }
 
-        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
             if (!planet.IsLaunched && !_player.IsGoalReached) stateMachine.TransitionTo(stateMachine.Follow, planet);

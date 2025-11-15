@@ -23,7 +23,7 @@ namespace Planet
             _maxSpeed = planetParams.MaxSpeed;
         }
 
-        public void Enter(IPlanetContext planet)
+        public void Enter(PlanetController planet)
         {
             if (_rotationMotion.IsActive()) return;
 
@@ -34,7 +34,7 @@ namespace Planet
                 .AddTo(planet.PlanetTransform);
         }
 
-        public void Update(IPlanetContext planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             Vector2 playerPos = _player.PlayerTransform.position;
             Vector2 targetPosition = _player.IsFacingRight　// playerの向きに応じて追従位置を変更
