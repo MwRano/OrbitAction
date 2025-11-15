@@ -57,6 +57,7 @@ namespace Planet
             _inputSystemActions = inputSystemActions;
             _stateMachine = stateMachine;
             _player = player;
+            player.OnRespawn += Respawn;
         }
 
         public void OnLaunch(InputAction.CallbackContext context)
@@ -71,6 +72,12 @@ namespace Planet
             {
                 deployState.Orbit(PlanetTransform.position);
             }
+        }
+
+        private void Respawn()
+        {
+            IsLaunched = false;
+            transform.position = (Vector2)_player.transform.position + Vector2.up;
         }
     }
 }
