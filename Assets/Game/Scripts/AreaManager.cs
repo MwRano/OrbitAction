@@ -26,10 +26,6 @@ namespace Game
             virtualCamera.Target.TrackingTarget = other.transform; // ターゲットをプレイヤーに設定
             PlayerController player = other.GetComponent<PlayerController>();
             player.SetRespawnPosition(respawnPoint.position);
-            Observable.EveryValueChanged(player, p => p.IsDead) // プレイヤーが死亡したらカメラにインパルスを送る
-                .Where(isDead => isDead)
-                .Subscribe(_ => impulseSource.GenerateImpulse())
-                .AddTo(this);
         }
 
         // プレイヤーがこのエリアから出た時
