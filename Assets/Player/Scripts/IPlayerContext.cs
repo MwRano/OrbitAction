@@ -17,6 +17,7 @@ namespace Player
 
         public void SetCanControl(bool value);
         public void SetIsSimulated(bool isSimulated);
-        public void Respawn();
+        public void AddImpulse(Vector2 toPos);
+        public void HandleBuried();
     }
 }

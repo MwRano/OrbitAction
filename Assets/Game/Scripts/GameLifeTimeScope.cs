@@ -1,6 +1,7 @@
 #nullable enable
 using Planet;
 using Player;
+using Unity.Cinemachine;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -20,6 +21,7 @@ namespace Game
 
             //Game
             builder.RegisterEntryPoint<GameClearDirector>(Lifetime.Scoped);
+            builder.RegisterComponentInHierarchy<CinemachineImpulseSource>();
 
             // Input
             builder.Register<InputSystemActions>(Lifetime.Scoped);

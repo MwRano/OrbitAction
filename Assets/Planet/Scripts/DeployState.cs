@@ -3,9 +3,10 @@ using System;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
-using R3;
 using UnityEngine;
 using VContainer;
+using System.Linq;
+
 
 namespace Planet
 {
@@ -18,7 +19,7 @@ namespace Planet
         private readonly PlanetParams _planetParams;
         private readonly IPlayerContext _player;
         private MotionHandle _floatingMotion;
-        private bool _isOrbiting = false;
+        private bool _isOrbiting;
         private GameObject _orbitAreaView = null!;
 
         [Inject]
@@ -37,8 +38,7 @@ namespace Planet
                 .WithLoops(-1, LoopType.Yoyo)
                 .BindToPositionY(planet.PlanetTransform)
                 .AddTo(planet.PlanetTransform);
-
-
+            
             // 公転範囲表示
             _orbitAreaView = planet.OrbitAreaView;
 
@@ -68,70 +68,55 @@ namespace Planet
                 .BindToLocalScaleXY(_orbitAreaView.transform)
                 .AddTo(_handles);
         }
-
-        /// <summary>
-        /// 公転
-        /// </summary>
+        
         public void Orbit(Vector2 planetPosition)
         {
-            // 公転範囲内にPlayerがいるか判定
-            if (!TryGetOverlapCircleObject(planetPosition, _planetParams.OrbitalRange, "Player", out var playerCollider)
-                || _isOrbiting) return;
-
+            var colliders = GetCollidersInCircle(planetPosition, _planetParams.OrbitalRange, "Orbitable");
+            if (colliders.Length == 0 || _isOrbiting) return;
+            
             _isOrbiting = true;
-            var playerRigidbody = playerCollider.gameObject.GetComponent<Rigidbody2D>();
-            var directionToPlanet = planetPosition - playerRigidbody.position;
-            var targetPos = _player.Rigidbody.position + directionToPlanet * 2; // planetと対照位置に移動するように
+            foreach (var col in colliders)
+            {
+                CreateOrbitMotion(planetPosition, col.attachedRigidbody);
+            }
+        }
+        
+        private Collider2D[] GetCollidersInCircle(Vector2 centerPosition, float radius, string layerTag)
+        {
+            var hitColliders = new Collider2D[20];
+            var filter = new ContactFilter2D();
+            filter.SetLayerMask(LayerMask.GetMask(layerTag));
+            filter.useTriggers = false;
+            var count = Physics2D.OverlapCircle(centerPosition, radius, filter, hitColliders);
+            
+            return  count == 0 ? Array.Empty<Collider2D>() : hitColliders.Take(count).ToArray();
+        }
 
-            // 公転モーション
-            LMotion.Create(_player.Rigidbody.position, targetPos, 0.6f)
+        private void CreateOrbitMotion(Vector2 centerPos, Rigidbody2D targetRb)
+        {
+            var dirToCenter = centerPos - targetRb.position;
+            var targetPos = targetRb.position + dirToCenter * 2; 
+            
+            // 移動モーション
+            LMotion.Create(targetRb.position, targetPos, 0.6f)
                 .WithEase(Ease.InSine)
-                .BindToLocalPositionXY(_player.PlayerTransform)
-                .AddTo(_handles);
-
+                .BindToLocalPositionXY(targetRb.transform);
+            
             // 拡大縮小モーション(手前に公転してるイメージ)
-            _player.SetIsSimulated(false);
-            LMotion.Create(_player.PlayerTransform.localScale, _player.PlayerTransform.localScale * 1.5f, 0.3f)
+            LMotion.Create(targetRb.transform.localScale, targetRb.transform.localScale * 1.5f, 0.3f)
                 .WithLoops(2, LoopType.Yoyo)
                 .WithEase(Ease.Linear)
                 .WithOnComplete(() =>
                 {
                     _isOrbiting = false;
-                    _player.SetIsSimulated(true);
-                    _player.Rigidbody.linearVelocity = Vector2.zero;
-                    bool isBuried =
-                        TryGetOverlapCircleObject(_player.PlayerTransform.position, 0.1f, "Ground", out var collider);
-                    if (isBuried)
-                    {
-                        _player.IsDead = true;
-                        _player.Respawn();
-                        return;
-                    }
-
-                    playerRigidbody.AddForce(directionToPlanet.normalized * _planetParams.ReleaseForce,
-                        ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
+                    if (!targetRb.CompareTag("Player")) return;
+                    _player.HandleBuried();
+                    _player.AddImpulse(dirToCenter.normalized * _planetParams.ReleaseForce);
                 })
-                .BindToLocalScale(_player.PlayerTransform)
-                .AddTo(_handles);
-        }
+                .BindToLocalScale(targetRb.transform);
+            
+            if (targetRb.CompareTag("Player")) _player.SetIsSimulated(false);
 
-        // 公転エリア内のPlayerを取得するメソッド
-        private bool TryGetOverlapCircleObject(Vector2 centerPosition, float radius, string tag,
-            out Collider2D collider)
-        {
-            Collider2D[] hitCollidersCache = new Collider2D[20];
-            var filter = new ContactFilter2D();
-            filter.SetLayerMask(LayerMask.GetMask(tag));
-            filter.useTriggers = false;
-            int size = Physics2D.OverlapCircle(centerPosition, radius, filter, hitCollidersCache);
-            if (size == 0)
-            {
-                collider = null!;
-                return false;
-            }
-
-            collider = hitCollidersCache[0];
-            return true;
         }
     }
 }
