@@ -110,9 +110,8 @@ namespace Planet
                 {
                     _isOrbiting = false;
                     if (!targetRb.CompareTag("Player")) return;
-                    _player.SetIsSimulated(true);
-                    _player.Rigidbody.linearVelocity = Vector2.zero;
-                    targetRb.AddForce(dirToCenter.normalized * _planetParams.ReleaseForce, ForceMode2D.Impulse);　// 公転終了時に外周方向へ力を加える
+                    _player.HandleBuried();
+                    _player.AddImpulse(dirToCenter.normalized * _planetParams.ReleaseForce);
                 })
                 .BindToLocalScale(targetRb.transform);
             
