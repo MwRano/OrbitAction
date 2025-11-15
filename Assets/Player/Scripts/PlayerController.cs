@@ -13,7 +13,7 @@ namespace Player
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
-    public class PlayerController : MonoBehaviour, IPlayerContext
+    public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Camera camera = null!;
         [SerializeField] private ParticleSystem moveDust = null!;
@@ -26,6 +26,15 @@ namespace Player
         private Vector2 _respawnPosition;
         private SpriteRenderer _spriteRenderer = null!;
         private PlayerStateMachine _stateMachine = null!;
+
+        public bool IsGoalReached { get; private set; }
+        public bool IsDead { get; set; }
+        public Transform PlayerTransform { get; private set; } = null!;
+        public Rigidbody2D Rigidbody { get; private set; } = null!;
+        public Animator PlayerAnimator { get; private set; } = null!;
+        public bool IsGrounded { get; private set; }
+        public bool IsFacingRight { get; private set; }
+        public Vector2 LookingDirection { get; private set; }
 
         private void Awake()
         {
@@ -75,15 +84,6 @@ namespace Player
 
             if (other.gameObject.CompareTag("Goal")) IsGoalReached = true;
         }
-
-        public bool IsGoalReached { get; private set; }
-        public bool IsDead { get; set; }
-        public Transform PlayerTransform { get; private set; } = null!;
-        public Rigidbody2D Rigidbody { get; private set; } = null!;
-        public Animator PlayerAnimator { get; private set; } = null!;
-        public bool IsGrounded { get; private set; }
-        public bool IsFacingRight { get; private set; }
-        public Vector2 LookingDirection { get; private set; }
 
         /// <summary>
         /// playerの操作が可能かどうかを設定するメソッド

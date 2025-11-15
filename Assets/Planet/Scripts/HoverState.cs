@@ -8,11 +8,11 @@ namespace Planet
 {
     public class HoverState : IPlanetState
     {
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private MotionHandle _floatingMotion;
 
         [Inject]
-        public HoverState(IPlayerContext player)
+        public HoverState(PlayerController player)
         {
             _player = player;
         }

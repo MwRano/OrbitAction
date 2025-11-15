@@ -32,22 +32,22 @@ namespace Player
         public FallState Fall { get; }
         public DeathState Death { get; }
 
-        public void Initialize(IPlayerState startingState, IPlayerContext playerContext)
+        public void Initialize(IPlayerState startingState, PlayerController player)
         {
             _currentState = startingState;
-            startingState.Enter(playerContext);
+            startingState.Enter(player);
         }
 
-        public void TransitionTo(IPlayerState nextState, IPlayerContext playerContext)
+        public void TransitionTo(IPlayerState nextState, PlayerController player)
         {
-            _currentState.Exit(playerContext);
+            _currentState.Exit(player);
             _currentState = nextState;
-            nextState.Enter(playerContext);
+            nextState.Enter(player);
         }
 
-        public void Update(IPlayerContext playerContext)
+        public void Update(PlayerController player)
         {
-            _currentState.Update(playerContext, this);
+            _currentState.Update(player, this);
         }
     }
 }

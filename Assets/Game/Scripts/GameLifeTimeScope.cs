@@ -27,7 +27,7 @@ namespace Game
             builder.Register<InputSystemActions>(Lifetime.Scoped);
 
             // Player
-            builder.RegisterComponentInHierarchy<PlayerController>().As<IPlayerContext>().AsSelf();
+            builder.RegisterComponentInHierarchy<PlayerController>();
             builder.Register<PlayerStateMachine>(Lifetime.Scoped);
             builder.Register<IdleState>(Lifetime.Scoped);
             builder.Register<WalkState>(Lifetime.Scoped);

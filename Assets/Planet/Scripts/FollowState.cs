@@ -10,13 +10,13 @@ namespace Planet
     public class FollowState : IPlanetState
     {
         private readonly float _maxSpeed;
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private readonly float _smoothTime;
         private Vector2 _currentVelocity;
         private MotionHandle _rotationMotion;
 
         [Inject]
-        public FollowState(IPlayerContext player, PlanetParams planetParams)
+        public FollowState(PlayerController player, PlanetParams planetParams)
         {
             _player = player;
             _smoothTime = planetParams.SmoothTime;

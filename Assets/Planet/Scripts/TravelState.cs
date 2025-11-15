@@ -11,12 +11,12 @@ namespace Planet
     {
         private readonly DeployPositionCalculator _deployPositionCalculator;
         private readonly PlanetParams _planetParams;
-        private readonly IPlayerContext _player;
+        private readonly PlayerController _player;
         private bool _isReached;
 
         [Inject]
         public TravelState(
-            IPlayerContext player,
+            PlayerController player,
             PlanetParams planetParams,
             DeployPositionCalculator deployPositionCalculator)
         {
