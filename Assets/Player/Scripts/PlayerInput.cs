@@ -9,6 +9,16 @@ namespace Player
     public class PlayerInput : IDisposable
     {
         private readonly InputSystemActions _inputSystemActions;
+        private readonly ReactiveProperty<Vector2> _look = new();
+        private readonly ReactiveProperty<Vector2> _aim = new();
+        private readonly ReactiveProperty<bool> _jump = new();
+        private readonly ReactiveProperty<bool> _orbit = new();
+        
+        public Vector2 Move { get; private set; }
+        public ReadOnlyReactiveProperty<Vector2> Look => _look;
+        public ReadOnlyReactiveProperty<Vector2> Aim=> _aim;
+        public ReadOnlyReactiveProperty<bool> Jump => _jump;
+        public ReadOnlyReactiveProperty<bool> Orbit => _orbit;
 
         [Inject]
         public PlayerInput(InputSystemActions inputSystemActions)
@@ -41,12 +51,6 @@ namespace Player
             _inputSystemActions.Player.Disable();
         }
 
-        public Vector2 Move { get; private set; } = new();
-        public ReactiveProperty<Vector2> Look { get; } = new();
-        public ReactiveProperty<Vector2> Aim { get; } = new();
-        public ReactiveProperty<bool> Jump { get; } = new();
-        public ReactiveProperty<bool> Orbit { get; } = new();
-
         private void OnMove(InputAction.CallbackContext context)
         {
             Move = context.ReadValue<Vector2>();
@@ -54,22 +58,22 @@ namespace Player
 
         private void OnLook(InputAction.CallbackContext context)
         {
-            Look.Value = context.ReadValue<Vector2>();
+            _look.Value = context.ReadValue<Vector2>();
         }
 
         private void OnAim(InputAction.CallbackContext context)
         {
-            Aim.Value = context.ReadValue<Vector2>();
+            _aim.Value = context.ReadValue<Vector2>();
         }
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            Jump.Value = context.ReadValueAsButton();
+            _jump.Value = context.ReadValueAsButton();
         }
 
         private void OnOrbit(InputAction.CallbackContext context)
         {
-            Orbit.Value = context.ReadValueAsButton();
+            _orbit.Value = context.ReadValueAsButton();
         }
     }
 }
