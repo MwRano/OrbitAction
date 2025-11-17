@@ -8,11 +8,11 @@ namespace Planet
 {
     public class HoverState : IPlanetState
     {
-        private readonly PlayerController _player;
+        private readonly PlayerCore _player;
         private MotionHandle _floatingMotion;
 
         [Inject]
-        public HoverState(PlayerController player)
+        public HoverState(PlayerCore player)
         {
             _player = player;
         }
@@ -30,7 +30,7 @@ namespace Planet
         public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
-            if (_player.Rigidbody.linearVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移
+            if (_player.Rb.linearVelocity.sqrMagnitude > 0.01f) // playerが動き出したらFollowへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Follow, planet);
             }

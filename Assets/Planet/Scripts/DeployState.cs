@@ -1,11 +1,9 @@
 ﻿#nullable enable
-using System;
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
 using UnityEngine;
 using VContainer;
-using System.Linq;
 
 
 namespace Planet
@@ -17,13 +15,13 @@ namespace Planet
     {
         private readonly CompositeMotionHandle _handles = new();
         private readonly PlanetParams _planetParams;
-        private readonly PlayerController _player;
+        private readonly PlayerCore _player;
         private MotionHandle _floatingMotion;
         private bool _isOrbiting;
         private GameObject _orbitAreaView = null!;
 
         [Inject]
-        public DeployState(PlanetParams planetParams, PlayerController player)
+        public DeployState(PlanetParams planetParams, PlayerCore player)
         {
             _player = player;
             _planetParams = planetParams;
@@ -54,7 +52,8 @@ namespace Planet
         public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
-            if (!planet.IsLaunched && !_player.IsGoalReached) stateMachine.TransitionTo(stateMachine.Follow, planet);
+            if (!planet.IsLaunched && !_player.IsGoalReached.Value)
+                stateMachine.TransitionTo(stateMachine.Follow, planet);
         }
 
         public void Exit()
@@ -67,55 +66,6 @@ namespace Planet
                 .WithOnComplete(() => _orbitAreaView.SetActive(false))
                 .BindToLocalScaleXY(_orbitAreaView.transform)
                 .AddTo(_handles);
-        }
-
-        public void Orbit(Vector2 planetPosition)
-        {
-            var colliders = GetCollidersInCircle(planetPosition, _planetParams.OrbitalRange, "Orbitable");
-            if (colliders.Length == 0 || _isOrbiting) return;
-
-            _isOrbiting = true;
-            foreach (var col in colliders)
-            {
-                CreateOrbitMotion(planetPosition, col.attachedRigidbody);
-            }
-        }
-
-        private Collider2D[] GetCollidersInCircle(Vector2 centerPosition, float radius, string layerTag)
-        {
-            var hitColliders = new Collider2D[20];
-            var filter = new ContactFilter2D();
-            filter.SetLayerMask(LayerMask.GetMask(layerTag));
-            filter.useTriggers = false;
-            var count = Physics2D.OverlapCircle(centerPosition, radius, filter, hitColliders);
-
-            return count == 0 ? Array.Empty<Collider2D>() : hitColliders.Take(count).ToArray();
-        }
-
-        private void CreateOrbitMotion(Vector2 centerPos, Rigidbody2D targetRb)
-        {
-            var dirToCenter = centerPos - targetRb.position;
-            var targetPos = targetRb.position + dirToCenter * 2;
-
-            // 移動モーション
-            LMotion.Create(targetRb.position, targetPos, 0.6f)
-                .WithEase(Ease.InSine)
-                .BindToLocalPositionXY(targetRb.transform);
-
-            // 拡大縮小モーション(手前に公転してるイメージ)
-            LMotion.Create(targetRb.transform.localScale, targetRb.transform.localScale * 1.5f, 0.3f)
-                .WithLoops(2, LoopType.Yoyo)
-                .WithEase(Ease.Linear)
-                .WithOnComplete(() =>
-                {
-                    _isOrbiting = false;
-                    if (!targetRb.CompareTag("Player")) return;
-                    _player.HandleBuried();
-                    _player.AddImpulse(dirToCenter.normalized * _planetParams.ReleaseForce);
-                })
-                .BindToLocalScale(targetRb.transform);
-
-            if (targetRb.CompareTag("Player")) _player.SetIsSimulated(false);
         }
     }
 }

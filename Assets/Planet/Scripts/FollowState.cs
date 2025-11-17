@@ -10,13 +10,14 @@ namespace Planet
     public class FollowState : IPlanetState
     {
         private readonly float _maxSpeed;
-        private readonly PlayerController _player;
+        private readonly PlayerCore _player;
+        private readonly PlayerMover _playerMover;
         private readonly float _smoothTime;
         private Vector2 _currentVelocity;
         private MotionHandle _rotationMotion;
 
         [Inject]
-        public FollowState(PlayerController player, PlanetParams planetParams)
+        public FollowState(PlayerCore player, PlanetParams planetParams)
         {
             _player = player;
             _smoothTime = planetParams.SmoothTime;
@@ -36,10 +37,10 @@ namespace Planet
 
         public void Update(PlanetController planet, PlanetStateMachine stateMachine)
         {
-            Vector2 playerPos = _player.PlayerTransform.position;
-            Vector2 targetPosition = _player.IsFacingRight　// playerの向きに応じて追従位置を変更
-                ? new Vector2(playerPos.x - 1, playerPos.y + 1)
-                : new Vector2(playerPos.x + 1, playerPos.y + 1);
+            Vector2 playerPos = _player.Rb.transform.position;
+            Vector2 targetPosition = _player.Sprite.flipX　// playerの向きに応じて追従位置を変更
+                ? new Vector2(playerPos.x + 1, playerPos.y + 1)
+                : new Vector2(playerPos.x - 1, playerPos.y + 1);
 
             planet.PlanetTransform.position = Vector2.SmoothDamp(
                 planet.PlanetTransform.position,
@@ -50,12 +51,12 @@ namespace Planet
             );
 
             // 状態遷移の判定
-            if (_player.Rigidbody.linearVelocity.sqrMagnitude < 0.01f &&
+            if (_player.Rb.linearVelocity.sqrMagnitude < 0.01f &&
                 _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Hover, planet);
             }
-            else if (planet.IsLaunched || _player.IsGoalReached) // 発射されたらTravelへ遷移
+            else if (planet.IsLaunched || _player.IsGoalReached.Value) // 発射されたらTravelへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Travel, planet);
             }
