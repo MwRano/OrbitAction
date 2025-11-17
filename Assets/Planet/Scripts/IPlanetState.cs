@@ -2,8 +2,8 @@
 {
     public interface IPlanetState
     {
-        public void Enter(PlanetController planet);
-        public void Update(PlanetController planet, PlanetStateMachine stateMachine);
+        public void Enter();
+        public void Update(PlanetStateMachine stateMachine);
         public void Exit();
     }
 }

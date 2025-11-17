@@ -15,35 +15,40 @@ namespace Planet
         private readonly float _smoothTime;
         private Vector2 _currentVelocity;
         private MotionHandle _rotationMotion;
+        private readonly PlanetController _planet;
 
         [Inject]
-        public FollowState(PlayerCore player, PlanetParams planetParams)
+        public FollowState(
+            PlayerCore player, 
+            PlanetParams planetParams,
+            PlanetController planet)
         {
             _player = player;
             _smoothTime = planetParams.SmoothTime;
             _maxSpeed = planetParams.MaxSpeed;
+            _planet = planet;
         }
 
-        public void Enter(PlanetController planet)
+        public void Enter()
         {
             if (_rotationMotion.IsActive()) return;
 
             _rotationMotion = LMotion.Create(0f, 360f, 30f)
                 .WithEase(Ease.Linear)
                 .WithLoops(-1)
-                .BindToLocalEulerAnglesZ(planet.PlanetTransform)
-                .AddTo(planet.PlanetTransform);
+                .BindToLocalEulerAnglesZ(_planet.PlanetTransform)
+                .AddTo(_planet.PlanetTransform);
         }
 
-        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetStateMachine stateMachine)
         {
             Vector2 playerPos = _player.Rb.transform.position;
             Vector2 targetPosition = _player.Sprite.flipX　// playerの向きに応じて追従位置を変更
                 ? new Vector2(playerPos.x + 1, playerPos.y + 1)
                 : new Vector2(playerPos.x - 1, playerPos.y + 1);
 
-            planet.PlanetTransform.position = Vector2.SmoothDamp(
-                planet.PlanetTransform.position,
+            _planet.PlanetTransform.position = Vector2.SmoothDamp(
+                _planet.PlanetTransform.position,
                 targetPosition,
                 ref _currentVelocity,
                 _smoothTime,
@@ -54,11 +59,11 @@ namespace Planet
             if (_player.Rb.linearVelocity.sqrMagnitude < 0.01f &&
                 _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
             {
-                stateMachine.TransitionTo(stateMachine.Hover, planet);
+                stateMachine.TransitionTo(stateMachine.Hover);
             }
-            else if (planet.IsLaunched || _player.IsGoalReached.Value) // 発射されたらTravelへ遷移
+            else if (_planet.IsLaunched || _player.IsGoalReached.Value) // 発射されたらTravelへ遷移
             {
-                stateMachine.TransitionTo(stateMachine.Travel, planet);
+                stateMachine.TransitionTo(stateMachine.Travel);
             }
         }
 

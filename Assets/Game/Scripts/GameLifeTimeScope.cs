@@ -46,10 +46,10 @@ namespace Game
             builder.Register<DeathState>(Lifetime.Scoped);
 
             // Planet
+            builder.RegisterEntryPoint<PlanetStateMachine>(Lifetime.Scoped).AsSelf();
             builder.RegisterComponentInHierarchy<PlanetController>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);
-            builder.Register<PlanetStateMachine>(Lifetime.Scoped);
             builder.Register<HoverState>(Lifetime.Scoped);
             builder.Register<FollowState>(Lifetime.Scoped);
             builder.Register<TravelState>(Lifetime.Scoped);

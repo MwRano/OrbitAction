@@ -1,12 +1,14 @@
 ﻿#nullable enable
+using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Planet
 {
     /// <summary>
     /// planetの状態を管理するクラス
     /// </summary>
-    public class PlanetStateMachine
+    public class PlanetStateMachine : IInitializable, ITickable
     {
         [Inject]
         public PlanetStateMachine(
@@ -27,22 +29,23 @@ namespace Planet
         public TravelState Travel { get; }
         public DeployState Deploy { get; }
 
-        public void Initialize(IPlanetState startingState, PlanetController planet)
+        public void Initialize()
         {
-            CurrentState = startingState;
-            startingState.Enter(planet);
+            CurrentState = Follow;
+            CurrentState.Enter();
         }
 
-        public void TransitionTo(IPlanetState nextState, PlanetController planet)
+        public void TransitionTo(IPlanetState nextState)
         {
             CurrentState.Exit();
             CurrentState = nextState;
-            nextState.Enter(planet);
+            nextState.Enter();
         }
 
-        public void Update(PlanetController planet)
+        public void Tick()
         {
-            CurrentState.Update(planet, this);
+            CurrentState.Update(this);
         }
+        
     }
 }

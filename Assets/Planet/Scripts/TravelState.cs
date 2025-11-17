@@ -13,6 +13,7 @@ namespace Planet
         private readonly PlanetParams _planetParams;
         private readonly PlayerCore _player;
         private readonly PlayerAimer _playerAimer;
+        private readonly PlanetController _planet;
         private bool _isReached;
 
         [Inject]
@@ -20,22 +21,24 @@ namespace Planet
             PlayerCore player,
             PlayerAimer playerAimer,
             PlanetParams planetParams,
-            DeployPositionCalculator deployPositionCalculator)
+            DeployPositionCalculator deployPositionCalculator,
+            PlanetController planet)
         {
             _player = player;
             _playerAimer = playerAimer;
             _planetParams = planetParams;
             _deployPositionCalculator = deployPositionCalculator;
+            _planet = planet;
         }
 
-        public void Enter(PlanetController planet)
+        public void Enter()
         {
             // 移動モーション 
-            float planetRadius = planet.PlanetSpriteRenderer.bounds.extents.x;
+            float planetRadius = _planet.PlanetSpriteRenderer.bounds.extents.x;
             Vector2 destPos = _deployPositionCalculator.Calculate(
                 _player.Rb.transform.position,
                 _playerAimer.AimDirection,
-                planet.PlanetTransform.position,
+                _planet.PlanetTransform.position,
                 planetRadius
             );
 
@@ -45,17 +48,17 @@ namespace Planet
             }
 
             // deply地点にlaunch
-            LMotion.Create((Vector2)planet.PlanetTransform.position, destPos, 0.3f)
+            LMotion.Create((Vector2)_planet.PlanetTransform.position, destPos, 0.3f)
                 .WithEase(Ease.OutCubic)
                 .WithOnComplete(() => _isReached = true)
-                .BindToPositionXY(planet.PlanetTransform)
-                .AddTo(planet.PlanetTransform);
+                .BindToPositionXY(_planet.PlanetTransform)
+                .AddTo(_planet.PlanetTransform);
         }
 
-        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetStateMachine stateMachine)
         {
             // 到達すればdeployに遷移
-            if (_isReached) stateMachine.TransitionTo(stateMachine.Deploy, planet);
+            if (_isReached) stateMachine.TransitionTo(stateMachine.Deploy);
         }
 
         public void Exit()

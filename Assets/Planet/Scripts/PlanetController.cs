@@ -16,7 +16,6 @@ namespace Planet
 
         private InputSystemActions _inputSystemActions = null!;
         private PlayerCore _player = null!;
-        private PlanetStateMachine _stateMachine = null!;
 
         public Transform PlanetTransform { get; private set; } = null!;
         public SpriteRenderer PlanetSpriteRenderer => GetComponent<SpriteRenderer>();
@@ -30,11 +29,9 @@ namespace Planet
             _inputSystemActions.Planet.Launch.performed += OnLaunch;
             // _inputSystemActions.Planet.Orbit.performed += OnOrbit;
             _inputSystemActions.Planet.Enable();
-
-            PlanetTransform = transform;
+            
             IsLaunched = false;
             OrbitAreaSpriteRenderer = orbitAreaView.GetComponent<SpriteRenderer>();
-            _stateMachine.Initialize(_stateMachine.Follow, this);
 
             _player.IsDead
                 .Where(isDead => isDead)
@@ -42,22 +39,17 @@ namespace Planet
                 .AddTo(this);
         }
 
-        private void Update()
-        {
-            _stateMachine.Update(this);
-        }
-
         [Inject]
         public void Construct(
             InputSystemActions inputSystemActions,
-            PlanetStateMachine stateMachine,
             PlayerCore player,
             PlayerRespawner playerRespawner)
         {
             _inputSystemActions = inputSystemActions;
-            _stateMachine = stateMachine;
             _player = player;
             playerRespawner.OnRespawn += Respawn;
+            
+            PlanetTransform = transform;
         }
 
         public void OnLaunch(InputAction.CallbackContext context)
