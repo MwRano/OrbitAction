@@ -18,11 +18,7 @@ namespace Player
             _player = player;
             player.IsDead
                 .Where(isDead => isDead)
-                .Subscribe(_ =>
-                {
-                    player.Rb.simulated = false;
-                    Respawn();
-                })
+                .Subscribe(_ => Respawn())
                 .AddTo(player);
         }
 
