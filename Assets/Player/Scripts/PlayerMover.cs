@@ -15,6 +15,7 @@ namespace Player
         private readonly PlanetParams _planetParams;
         private readonly PlayerCore _player;
         private readonly PlayerParam _playerParams;
+        private readonly CompositeDisposable _disposable = new();
         private bool _isOrbiting;
 
         public PlayerMover(PlayerParam playerParam,
@@ -31,17 +32,20 @@ namespace Player
 
             playerInput.Jump
                 .Where(isJump => isJump)
-                .Subscribe(_ => Jump());
+                .Subscribe(_ => Jump())
+                .AddTo(_player);
 
             playerInput.Orbit
                 .Where(isOrbit => isOrbit &&
                                   planetStateMachine.CurrentState == planetStateMachine.Deploy)
-                .Subscribe(_ => Orbit(_planet.PlanetTransform.position));
+                .Subscribe(_ => Orbit(_planet.PlanetTransform.position))
+                .AddTo(_player);
 
             Observable.EveryUpdate(UnityFrameProvider.FixedUpdate)
                 .Where(_ => playerInput.Move.sqrMagnitude > 0 ||
                             _player.Rb.linearVelocity.sqrMagnitude <= 0)
-                .Subscribe(_ => Move(playerInput.Move));
+                .Subscribe(_ => Move(playerInput.Move))
+                .AddTo(_player);
         }
 
         public void Tick()
