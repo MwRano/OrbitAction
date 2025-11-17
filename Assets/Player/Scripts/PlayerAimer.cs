@@ -1,23 +1,28 @@
 ﻿using R3;
 using UnityEngine;
 using System;
+using VContainer;
 
 namespace Player
 {
     public class PlayerAimer
     {
         private readonly PlayerCore _player;
-
+        private readonly CompositeDisposable _disposable = new();
+        
+        [Inject]
         public PlayerAimer(PlayerInput playerInput, PlayerCore player)
         {
             _player = player;
 
             playerInput.Look
                 .Where(l => l.sqrMagnitude >= 0.1f * 0.1f)
-                .Subscribe(Look);
+                .Subscribe(Look)
+                .AddTo(_player);
 
             playerInput.Aim
-                .Subscribe(Aim);
+                .Subscribe(Aim)
+                .AddTo(_player);
         }
 
         public Vector2 AimDirection { get; private set; }

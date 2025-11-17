@@ -2,10 +2,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
+using System;
 
 namespace Player
 {
-    public class PlayerInput
+    public class PlayerInput : IDisposable
     {
         private readonly InputSystemActions _inputSystemActions;
 
@@ -24,6 +25,20 @@ namespace Player
             _inputSystemActions.Player.Orbit.canceled += OnOrbit;
 
             _inputSystemActions.Player.Enable();
+        }
+
+        public void Dispose()
+        {
+            _inputSystemActions.Player.Move.performed -= OnMove;
+            _inputSystemActions.Player.Move.canceled -= OnMove;
+            _inputSystemActions.Player.Look.performed -= OnLook;
+            _inputSystemActions.Player.Aim.performed -= OnAim;
+            _inputSystemActions.Player.Jump.performed -= OnJump;
+            _inputSystemActions.Player.Jump.canceled -= OnJump;
+            _inputSystemActions.Player.Orbit.performed -= OnOrbit;
+            _inputSystemActions.Player.Orbit.canceled -= OnOrbit;
+
+            _inputSystemActions.Player.Disable();
         }
 
         public Vector2 Move { get; private set; } = new();

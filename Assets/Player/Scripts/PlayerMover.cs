@@ -11,37 +11,39 @@ namespace Player
 {
     public class PlayerMover : ITickable
     {
-        private readonly PlanetController _planet;
         private readonly PlanetParams _planetParams;
         private readonly PlayerCore _player;
         private readonly PlayerParam _playerParams;
+        private readonly CompositeDisposable _disposable = new();
         private bool _isOrbiting;
 
         public PlayerMover(PlayerParam playerParam,
             PlayerCore playerCore,
             PlayerInput playerInput,
             PlanetStateMachine planetStateMachine,
-            PlanetController planetController,
+            PlanetController planet,
             PlanetParams planetParams)
         {
             _playerParams = playerParam;
             _player = playerCore;
-            _planet = planetController;
             _planetParams = planetParams;
 
             playerInput.Jump
                 .Where(isJump => isJump)
-                .Subscribe(_ => Jump());
+                .Subscribe(_ => Jump())
+                .AddTo(_player);
 
             playerInput.Orbit
                 .Where(isOrbit => isOrbit &&
                                   planetStateMachine.CurrentState == planetStateMachine.Deploy)
-                .Subscribe(_ => Orbit(_planet.PlanetTransform.position));
+                .Subscribe(_ => Orbit(planet.PlanetTransform.position))
+                .AddTo(_player);
 
             Observable.EveryUpdate(UnityFrameProvider.FixedUpdate)
                 .Where(_ => playerInput.Move.sqrMagnitude > 0 ||
                             _player.Rb.linearVelocity.sqrMagnitude <= 0)
-                .Subscribe(_ => Move(playerInput.Move));
+                .Subscribe(_ => Move(playerInput.Move))
+                .AddTo(_player);
         }
 
         public void Tick()
@@ -54,12 +56,7 @@ namespace Player
                 new Vector2(moveInput.x * _playerParams.MoveSpeed, _player.Rb.linearVelocity.y);
 
             // 向きに応じてviewの反転
-            var preFlipX = _player.Sprite.flipX;
             _player.Sprite.flipX = moveInput.x < 0 || !(moveInput.x > 0) && _player.Sprite.flipX;
-            // if (sprite.flipX != preFlipX)
-            // {
-            //     CreateDust(moveDust);
-            // }
         }
 
         private void Jump()

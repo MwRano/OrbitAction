@@ -1,24 +1,29 @@
 ﻿using System;
 using R3;
 using UnityEngine;
+using VContainer;
 
 namespace Player
 {
     public class PlayerRespawner
     {
         private Vector2 _respawnPosition;
-
-        public Action OnRespawn;
-
+        private readonly PlayerCore _player;
+        
+        public Action OnRespawn { get; set; }
+        
+        [Inject]
         public PlayerRespawner(PlayerCore player)
         {
+            _player = player;
             player.IsDead
                 .Where(isDead => isDead)
                 .Subscribe(_ =>
                 {
                     player.Rb.simulated = false;
-                    Respawn(player.Rb);
-                });
+                    Respawn();
+                })
+                .AddTo(player);
         }
 
         public void SetRespawnPosition(Vector2 respawnPosition)
@@ -26,17 +31,18 @@ namespace Player
             _respawnPosition = respawnPosition;
         }
 
-        private void Respawn(Rigidbody2D rb)
+        private void Respawn()
         {
-            rb.simulated = false;
+            _player.Rb.simulated = false;
             Observable.Timer(TimeSpan.FromSeconds(0.635f))
                 .Subscribe(_ =>
                 {
                     OnRespawn?.Invoke();
-                    rb.transform.position = _respawnPosition;
-                    rb.linearVelocity = Vector2.zero;
-                    rb.simulated = true;
-                });
+                    _player.Rb.transform.position = _respawnPosition;
+                    _player.Rb.linearVelocity = Vector2.zero;
+                    _player.Rb.simulated = true;
+                })
+                .AddTo(_player);
         }
     }
 }
