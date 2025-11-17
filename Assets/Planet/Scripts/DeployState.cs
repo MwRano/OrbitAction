@@ -5,7 +5,6 @@ using Player;
 using UnityEngine;
 using VContainer;
 
-
 namespace Planet
 {
     /// <summary>
@@ -19,29 +18,34 @@ namespace Planet
         private MotionHandle _floatingMotion;
         private bool _isOrbiting;
         private GameObject _orbitAreaView = null!;
+        private readonly PlanetController _planet;
 
         [Inject]
-        public DeployState(PlanetParams planetParams, PlayerCore player)
+        public DeployState(
+            PlanetParams planetParams, 
+            PlayerCore player,
+            PlanetController planet)
         {
             _player = player;
             _planetParams = planetParams;
+            _planet = planet;
         }
 
-        public void Enter(PlanetController planet)
+        public void Enter()
         {
             // 浮遊モーション
             _floatingMotion = LMotion
-                .Create(planet.PlanetTransform.position.y, planet.PlanetTransform.position.y - 0.2f, 1f)
+                .Create(_planet.PlanetTransform.position.y, _planet.PlanetTransform.position.y - 0.2f, 1f)
                 .WithEase(Ease.InOutSine)
                 .WithLoops(-1, LoopType.Yoyo)
-                .BindToPositionY(planet.PlanetTransform)
-                .AddTo(planet.PlanetTransform);
+                .BindToPositionY(_planet.PlanetTransform)
+                .AddTo(_planet.PlanetTransform);
 
             // 公転範囲表示
-            _orbitAreaView = planet.OrbitAreaView;
+            _orbitAreaView = _planet.OrbitAreaView;
 
             // 拡大モーション
-            float baseRadius = planet.OrbitAreaSpriteRenderer.sprite.bounds.extents.x;
+            float baseRadius = _planet.OrbitAreaSpriteRenderer.sprite.bounds.extents.x;
             _orbitAreaView.SetActive(true);
             LMotion.Create(Vector2.zero, Vector2.one * (_planetParams.OrbitalRange / baseRadius), 0.3f)
                 .WithEase(Ease.OutBack)
@@ -49,11 +53,11 @@ namespace Planet
                 .AddTo(_handles);
         }
 
-        public void Update(PlanetController planet, PlanetStateMachine stateMachine)
+        public void Update(PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
-            if (!planet.IsLaunched && !_player.IsGoalReached.Value)
-                stateMachine.TransitionTo(stateMachine.Follow, planet);
+            if (!_planet.IsLaunched && !_player.IsGoalReached.Value)
+                stateMachine.TransitionTo(stateMachine.Follow);
         }
 
         public void Exit()
