@@ -40,6 +40,7 @@ namespace Player.State
 
         public void Exit()
         {
+            _player.IsDead.Value = false;
         }
     }
 }
