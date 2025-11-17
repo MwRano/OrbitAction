@@ -1,44 +1,50 @@
 #nullable enable
 using UnityEngine;
 
-namespace Player
+namespace Player.State
 {
     public class JumpState : IPlayerState
     {
-        public void Enter(PlayerController playerContext)
+        private readonly PlayerCore _player;
+
+        public JumpState(PlayerCore player)
         {
-            playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.JumpHash);
+            _player = player;
         }
 
-        public void Update(PlayerController playerContext, PlayerStateMachine stateMachine)
+        public void Enter()
+        {
+            _player.Anim.SetTrigger(PlayerAnimationIds.JumpHash);
+        }
+
+        public void Update(PlayerStateMachine stateMachine)
         {
             // Deathへの遷移
-            if (playerContext.IsDead)
+            if (_player.IsDead.CurrentValue)
             {
-                stateMachine.TransitionTo(stateMachine.Death, playerContext);
+                stateMachine.TransitionTo(stateMachine.Death);
             }
 
-            if (playerContext.IsGrounded)
+            if (_player.IsGrounded.CurrentValue)
             {
                 // Walkへの遷移
-                if (Mathf.Abs(playerContext.Rigidbody.linearVelocityX) > 0)
+                if (Mathf.Abs(_player.Rb.linearVelocityX) > 0)
                 {
-                    stateMachine.TransitionTo(stateMachine.Walk, playerContext);
+                    stateMachine.TransitionTo(stateMachine.Walk);
                 }
             }
             else
             {
                 // Fallへの遷移
-                if (playerContext.Rigidbody.linearVelocityY < 0)
+                if (_player.Rb.linearVelocityY < 0)
                 {
-                    stateMachine.TransitionTo(stateMachine.Fall, playerContext);
+                    stateMachine.TransitionTo(stateMachine.Fall);
                 }
             }
         }
 
-        public void Exit(PlayerController playerContext)
+        public void Exit()
         {
-            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.JumpHash);
         }
     }
 }

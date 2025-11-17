@@ -1,13 +1,15 @@
 #nullable enable
 
+using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
-namespace Player
+namespace Player.State
 {
     /// <summary>
     /// Playerの状態を管理するステートマシン
     /// </summary>
-    public class PlayerStateMachine
+    public class PlayerStateMachine : IInitializable, ITickable
     {
         private IPlayerState _currentState = null!;
 
@@ -32,22 +34,22 @@ namespace Player
         public FallState Fall { get; }
         public DeathState Death { get; }
 
-        public void Initialize(IPlayerState startingState, PlayerController player)
+        public void Initialize()
         {
-            _currentState = startingState;
-            startingState.Enter(player);
+            _currentState = Idle;
+            _currentState.Enter();
         }
 
-        public void TransitionTo(IPlayerState nextState, PlayerController player)
+        public void Tick()
         {
-            _currentState.Exit(player);
+            _currentState.Update(this);
+        }
+
+        public void TransitionTo(IPlayerState nextState)
+        {
+            _currentState.Exit();
             _currentState = nextState;
-            nextState.Enter(player);
-        }
-
-        public void Update(PlayerController player)
-        {
-            _currentState.Update(player, this);
+            nextState.Enter();
         }
     }
 }
