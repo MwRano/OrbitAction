@@ -1,50 +1,56 @@
 #nullable enable
 using UnityEngine;
 
-namespace Player
+namespace Player.State
 {
     public class IdleState : IPlayerState
     {
-        public void Enter(PlayerController player)
+        private readonly PlayerCore _player;
+
+        public IdleState(PlayerCore player)
         {
-            player.PlayerAnimator.SetTrigger(PlayerAnimationIds.IdleHash);
+            _player = player;
         }
 
-        public void Update(PlayerController player, PlayerStateMachine stateMachine)
+        public void Enter()
+        {
+            _player.Anim.SetTrigger(PlayerAnimationIds.IdleHash);
+        }
+
+        public void Update(PlayerStateMachine stateMachine)
         {
             // Deathへの遷移
-            if (player.IsDead)
+            if (_player.IsDead.CurrentValue)
             {
-                stateMachine.TransitionTo(stateMachine.Death, player);
+                stateMachine.TransitionTo(stateMachine.Death);
             }
 
-            if (!player.IsGrounded)
+            if (_player.IsGrounded.CurrentValue)
             {
-                switch (player.Rigidbody.linearVelocityY)
+                // Walkへの遷移
+                if (Mathf.Abs(_player.Rb.linearVelocityX) > 0.1f)
                 {
-                    // Jumpへの遷移
-                    case > 0:
-                        stateMachine.TransitionTo(stateMachine.Jump, player);
-                        break;
-                    // Fallへの遷移
-                    case < 0:
-                        stateMachine.TransitionTo(stateMachine.Fall, player);
-                        break;
+                    stateMachine.TransitionTo(stateMachine.Walk);
                 }
             }
             else
             {
-                // Walkへの遷移
-                if (Mathf.Abs(player.Rigidbody.linearVelocityX) > 0f)
+                switch (_player.Rb.linearVelocityY)
                 {
-                    stateMachine.TransitionTo(stateMachine.Walk, player);
+                    // Jumpへの遷移
+                    case > 0:
+                        stateMachine.TransitionTo(stateMachine.Jump);
+                        break;
+                    // Fallへの遷移
+                    case < 0:
+                        stateMachine.TransitionTo(stateMachine.Fall);
+                        break;
                 }
             }
         }
 
-        public void Exit(PlayerController player)
+        public void Exit()
         {
-            player.PlayerAnimator.ResetTrigger(PlayerAnimationIds.IdleHash);
         }
     }
 }

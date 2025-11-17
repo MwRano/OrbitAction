@@ -13,7 +13,8 @@ namespace Planet
         private PlanetController _planet = null!;
         private PlanetStateMachine _planetStateMachine = null!;
 
-        private PlayerController _player = null!;
+        private PlayerCore _player = null!;
+        private PlayerAimer _playerAimer = null!;
 
         private void Start()
         {
@@ -24,14 +25,14 @@ namespace Planet
                 .AddTo(this);
 
             // プレイヤーの位置と向きに応じてガイドの位置を更新する
-            var lookingObs = Observable.EveryValueChanged(_player, p => p.LookingDirection).Select(v => (object)v);
-            var positionObs = Observable.EveryValueChanged(_player, p => p.PlayerTransform.position)
+            var lookingObs = Observable.EveryValueChanged(_playerAimer, p => p.AimDirection).Select(v => (object)v);
+            var positionObs = Observable.EveryValueChanged(_player, p => p.Rb.transform.position)
                 .Select(v => (object)v);
             Observable.Merge(lookingObs, positionObs)
                 .Subscribe(_ =>
                     planetView.transform.position = _deployPositionCalculator.Calculate(
-                        _player.PlayerTransform.position,
-                        _player.LookingDirection,
+                        _player.Rb.transform.position,
+                        _playerAimer.AimDirection,
                         _planet.PlanetTransform.position,
                         _planet.PlanetSpriteRenderer.bounds.extents.x))
                 .AddTo(this);
@@ -39,12 +40,14 @@ namespace Planet
 
         [Inject]
         public void Construct(
-            PlayerController player,
+            PlayerCore player,
+            PlayerAimer playerAimer,
             PlanetController planet,
             DeployPositionCalculator deployPositionCalculator,
             PlanetStateMachine planetStateMachine)
         {
             _player = player;
+            _playerAimer = playerAimer;
             _planet = planet;
             _deployPositionCalculator = deployPositionCalculator;
             _planetStateMachine = planetStateMachine;

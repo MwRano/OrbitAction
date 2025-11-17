@@ -1,7 +1,7 @@
 using Player;
 using Unity.Cinemachine;
 using UnityEngine;
-using R3;
+using VContainer;
 
 namespace Game
 {
@@ -10,12 +10,16 @@ namespace Game
     /// </summary>
     public class AreaManager : MonoBehaviour
     {
-        private const int ActivePriority = 11; // アクティブ時の優先度
-        private const int InactivePriority = 10; // 非アクティブ時の優先度
-
         [SerializeField] private CinemachineCamera virtualCamera; // このエリアが管理するvcam
         [SerializeField] private Transform respawnPoint; // リスポーンポイント
         [SerializeField] private CinemachineImpulseSource impulseSource;
+        
+        private PlayerRespawner _playerRespawner; // プレイヤーリスポーナー
+        private const int ActivePriority = 11; // アクティブ時の優先度
+        private const int InactivePriority = 10; // 非アクティブ時の優先度
+        
+        [Inject]
+        public void Construct(PlayerRespawner playerRespawner) => _playerRespawner = playerRespawner;
 
         // プレイヤーがこのエリアに入った時
         private void OnTriggerEnter2D(Collider2D other)
@@ -24,8 +28,7 @@ namespace Game
 
             virtualCamera.Priority = ActivePriority;
             virtualCamera.Target.TrackingTarget = other.transform; // ターゲットをプレイヤーに設定
-            PlayerController player = other.GetComponent<PlayerController>();
-            player.SetRespawnPosition(respawnPoint.position);
+            _playerRespawner.SetRespawnPosition(respawnPoint.position);
         }
 
         // プレイヤーがこのエリアから出た時
@@ -34,5 +37,6 @@ namespace Game
             if (!other.CompareTag("Player")) return;
             virtualCamera.Priority = InactivePriority;
         }
+        
     }
 }

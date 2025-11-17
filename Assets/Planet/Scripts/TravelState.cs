@@ -11,16 +11,19 @@ namespace Planet
     {
         private readonly DeployPositionCalculator _deployPositionCalculator;
         private readonly PlanetParams _planetParams;
-        private readonly PlayerController _player;
+        private readonly PlayerCore _player;
+        private readonly PlayerAimer _playerAimer;
         private bool _isReached;
 
         [Inject]
         public TravelState(
-            PlayerController player,
+            PlayerCore player,
+            PlayerAimer playerAimer,
             PlanetParams planetParams,
             DeployPositionCalculator deployPositionCalculator)
         {
             _player = player;
+            _playerAimer = playerAimer;
             _planetParams = planetParams;
             _deployPositionCalculator = deployPositionCalculator;
         }
@@ -30,15 +33,15 @@ namespace Planet
             // 移動モーション 
             float planetRadius = planet.PlanetSpriteRenderer.bounds.extents.x;
             Vector2 destPos = _deployPositionCalculator.Calculate(
-                _player.PlayerTransform.position,
-                _player.LookingDirection,
+                _player.Rb.transform.position,
+                _playerAimer.AimDirection,
                 planet.PlanetTransform.position,
                 planetRadius
             );
 
-            if (_player.IsGoalReached)
+            if (_player.IsGoalReached.Value)
             {
-                destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.PlayerTransform.position;
+                destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.Rb.transform.position;
             }
 
             // deply地点にlaunch

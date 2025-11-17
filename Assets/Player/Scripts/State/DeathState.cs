@@ -2,41 +2,43 @@
 
 using Unity.Cinemachine;
 
-namespace Player
+namespace Player.State
 {
     public class DeathState : IPlayerState
     {
         private readonly CinemachineImpulseSource _impulseSource;
+        private PlayerCore _player;
 
-        public DeathState(CinemachineImpulseSource impulseSource)
+        public DeathState(CinemachineImpulseSource impulseSource,
+            PlayerCore player)
         {
             _impulseSource = impulseSource;
+            _player = player;
         }
 
-        public void Enter(PlayerController player)
+        public void Enter()
         {
-            player.PlayerAnimator.SetTrigger(PlayerAnimationIds.DeathHash);
-            player.IsDead = false;
+            _player.Anim.SetTrigger(PlayerAnimationIds.DeathHash);
             _impulseSource.GenerateImpulse();
         }
 
-        public void Update(PlayerController player, PlayerStateMachine stateMachine)
+        public void Update(PlayerStateMachine stateMachine)
         {
-            if (player.IsGrounded)
+            if (_player.IsGrounded.CurrentValue)
             {
-                stateMachine.TransitionTo(stateMachine.Idle, player);
+                stateMachine.TransitionTo(stateMachine.Idle);
             }
             else
             {
                 // Fallへの遷移
-                if (player.Rigidbody.linearVelocityY < 0f)
+                if (_player.Rb.linearVelocityY < 0f)
                 {
-                    stateMachine.TransitionTo(stateMachine.Fall, player);
+                    stateMachine.TransitionTo(stateMachine.Fall);
                 }
             }
         }
 
-        public void Exit(PlayerController player)
+        public void Exit()
         {
         }
     }

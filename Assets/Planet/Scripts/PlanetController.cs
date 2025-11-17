@@ -15,7 +15,7 @@ namespace Planet
         [SerializeField] private GameObject orbitAreaView = null!;
 
         private InputSystemActions _inputSystemActions = null!;
-        private PlayerController _player = null!;
+        private PlayerCore _player = null!;
         private PlanetStateMachine _stateMachine = null!;
 
         public Transform PlanetTransform { get; private set; } = null!;
@@ -28,7 +28,7 @@ namespace Planet
         {
             // InputSystemへのメソッド登録
             _inputSystemActions.Planet.Launch.performed += OnLaunch;
-            _inputSystemActions.Planet.Orbit.performed += OnOrbit;
+            // _inputSystemActions.Planet.Orbit.performed += OnOrbit;
             _inputSystemActions.Planet.Enable();
 
             PlanetTransform = transform;
@@ -36,8 +36,7 @@ namespace Planet
             OrbitAreaSpriteRenderer = orbitAreaView.GetComponent<SpriteRenderer>();
             _stateMachine.Initialize(_stateMachine.Follow, this);
 
-            // playerが死亡したら発射状態を解除
-            Observable.EveryValueChanged(_player, p => p.IsDead)
+            _player.IsDead
                 .Where(isDead => isDead)
                 .Subscribe(_ => IsLaunched = false)
                 .AddTo(this);
@@ -52,26 +51,18 @@ namespace Planet
         public void Construct(
             InputSystemActions inputSystemActions,
             PlanetStateMachine stateMachine,
-            PlayerController player)
+            PlayerCore player,
+            PlayerRespawner playerRespawner)
         {
             _inputSystemActions = inputSystemActions;
             _stateMachine = stateMachine;
             _player = player;
-            player.OnRespawn += Respawn;
+            playerRespawner.OnRespawn += Respawn;
         }
 
         public void OnLaunch(InputAction.CallbackContext context)
         {
             IsLaunched ^= true;
-        }
-
-        private void OnOrbit(InputAction.CallbackContext context)
-        {
-            // DeployStateのときのみAttractを実行
-            if (_stateMachine.CurrentState is DeployState deployState)
-            {
-                deployState.Orbit(PlanetTransform.position);
-            }
         }
 
         private void Respawn()

@@ -1,64 +1,49 @@
 #nullable enable
 using UnityEngine;
 
-namespace Player
+namespace Player.State
 {
     public class WalkState : IPlayerState
     {
-        const float VerticalThreshold = 0.1f;
-        const float HorizontalIdleThreshold = 0.1f;
+        private readonly PlayerCore _player;
 
-        public void Enter(PlayerController playerContext)
+        public WalkState(PlayerCore player)
         {
-            playerContext.PlayerAnimator.SetTrigger(PlayerAnimationIds.WalkHash);
+            _player = player;
         }
 
-        public void Update(PlayerController playerContext, PlayerStateMachine stateMachine)
+        public void Enter()
         {
-            if (ShouldTransitionToDeath(playerContext))
+            _player.Anim.SetTrigger(PlayerAnimationIds.WalkHash);
+        }
+
+        public void Update(PlayerStateMachine stateMachine)
+        {
+            if (_player.IsDead.CurrentValue)
+                stateMachine.TransitionTo(stateMachine.Death);
+
+
+            if (_player.IsGrounded.CurrentValue)
             {
-                stateMachine.TransitionTo(stateMachine.Death, playerContext);
-                return;
+                if (Mathf.Abs(_player.Rb.linearVelocityX) <= 0.2f)
+                    stateMachine.TransitionTo(stateMachine.Idle);
             }
-
-            if (TryHandleAirTransition(playerContext, stateMachine)) return;
-
-            if (TryHandleIdleTransition(playerContext, stateMachine)) return;
-        }
-
-        public void Exit(PlayerController playerContext)
-        {
-            playerContext.PlayerAnimator.ResetTrigger(PlayerAnimationIds.WalkHash);
-        }
-
-        private static bool ShouldTransitionToDeath(PlayerController ctx) => ctx.IsDead;
-
-        private static bool TryHandleAirTransition(PlayerController ctx, PlayerStateMachine sm)
-        {
-            if (ctx.IsGrounded) return false;
-
-            switch (ctx.Rigidbody.linearVelocityY)
+            else
             {
-                case > VerticalThreshold:
-                    sm.TransitionTo(sm.Jump, ctx);
-                    return true;
-                case < -VerticalThreshold:
-                    sm.TransitionTo(sm.Fall, ctx);
-                    return true;
-                default:
-                    return false;
+                switch (_player.Rb.linearVelocityY)
+                {
+                    case > 0.01f:
+                        stateMachine.TransitionTo(stateMachine.Jump);
+                        break;
+                    case < -0.01f:
+                        stateMachine.TransitionTo(stateMachine.Fall);
+                        break;
+                }
             }
         }
 
-        private static bool TryHandleIdleTransition(PlayerController ctx, PlayerStateMachine sm)
+        public void Exit()
         {
-            if (Mathf.Abs(ctx.Rigidbody.linearVelocityX) < HorizontalIdleThreshold)
-            {
-                sm.TransitionTo(sm.Idle, ctx);
-                return true;
-            }
-
-            return false;
         }
     }
 }

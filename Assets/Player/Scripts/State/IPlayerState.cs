@@ -1,9 +1,9 @@
-namespace Player
+namespace Player.State
 {
     public interface IPlayerState
     {
-        public void Enter(PlayerController player);
-        public void Update(PlayerController player, PlayerStateMachine stateMachine);
-        public void Exit(PlayerController player);
+        public void Enter();
+        public void Update(PlayerStateMachine stateMachine);
+        public void Exit();
     }
 }
