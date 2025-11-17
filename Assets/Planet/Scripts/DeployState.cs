@@ -56,7 +56,7 @@ namespace Planet
         public void Update(PlanetStateMachine stateMachine)
         {
             // 状態遷移の判定
-            if (!_planet.IsLaunched && !_player.IsGoalReached.Value)
+            if (!_planet.IsLaunched && !_player.IsGoalReached.CurrentValue)
                 stateMachine.TransitionTo(stateMachine.Follow);
         }
 

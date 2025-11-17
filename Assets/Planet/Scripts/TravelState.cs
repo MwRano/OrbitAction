@@ -42,7 +42,7 @@ namespace Planet
                 planetRadius
             );
 
-            if (_player.IsGoalReached.Value)
+            if (_player.IsGoalReached.CurrentValue)
             {
                 destPos = (Vector2.up * _planetParams.OrbitalRange) + (Vector2)_player.Rb.transform.position;
             }
