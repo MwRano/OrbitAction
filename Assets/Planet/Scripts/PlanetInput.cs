@@ -22,19 +22,17 @@ namespace Orbit.Planet
             _inputSystemActions.Planet.Orbit.performed += OnOrbit;
             _inputSystemActions.Planet.Orbit.canceled += OnOrbit;
             _inputSystemActions.Planet.Launch.performed += OnLaunch;
-            _inputSystemActions.Planet.Launch.canceled += OnLaunch;
 
-            _inputSystemActions.Player.Enable();
+            _inputSystemActions.Planet.Enable();
         }
 
         public void Dispose()
         {
-            _inputSystemActions.Planet.Orbit.performed += OnOrbit;
-            _inputSystemActions.Planet.Orbit.canceled += OnOrbit;
-            _inputSystemActions.Planet.Launch.performed += OnLaunch;
-            _inputSystemActions.Planet.Launch.canceled += OnLaunch;
+            _inputSystemActions.Planet.Orbit.performed -= OnOrbit;
+            _inputSystemActions.Planet.Orbit.canceled -= OnOrbit;
+            _inputSystemActions.Planet.Launch.performed -= OnLaunch;
 
-            _inputSystemActions.Player.Enable();
+            _inputSystemActions.Planet.Disable();
         }
 
         private void OnOrbit(InputAction.CallbackContext context)
@@ -44,7 +42,7 @@ namespace Orbit.Planet
         
         private void OnLaunch(InputAction.CallbackContext context)
         {
-            _launch.Value = context.ReadValueAsButton();
+            _launch.Value ^= context.ReadValueAsButton();
         }
     }
 }
