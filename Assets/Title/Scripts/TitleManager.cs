@@ -1,12 +1,12 @@
 #nullable enable
-using Game;
-using UnityEngine;
-using VContainer;
-using UnityEngine.InputSystem;
 using LitMotion;
+using Orbit.Game;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using VContainer;
 
-namespace Title
+namespace Orbit.Title
 {
     public class TitleManager : MonoBehaviour
     {

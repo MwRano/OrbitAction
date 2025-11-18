@@ -1,10 +1,10 @@
 #nullable enable
-using Player;
+using Orbit.Player;
+using R3;
 using UnityEngine;
 using VContainer;
-using R3;
 
-namespace Planet
+namespace Orbit.Planet
 {
     public class PlanetGuide : MonoBehaviour
     {

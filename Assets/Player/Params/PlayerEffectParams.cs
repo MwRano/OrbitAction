@@ -1,7 +1,7 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Player
+namespace Orbit.Player
 {
     [CreateAssetMenu(fileName = "PlayerEffectParams", menuName = "Scriptable Objects/PlayerEffectScriptableObject")]
     public class PlayerEffectParams : ScriptableObject

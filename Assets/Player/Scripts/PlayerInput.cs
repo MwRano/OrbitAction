@@ -1,10 +1,10 @@
-﻿using R3;
+﻿using System;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
-using System;
 
-namespace Player
+namespace Orbit.Player
 {
     public class PlayerInput : IDisposable
     {

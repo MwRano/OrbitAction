@@ -1,4 +1,4 @@
-namespace Core.StateMachine
+namespace Orbit.Core.StateMachine
 {
     public interface IState<in T> where T : class
     {

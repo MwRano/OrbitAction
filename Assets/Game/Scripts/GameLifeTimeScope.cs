@@ -1,13 +1,13 @@
 #nullable enable
-using Planet;
-using Player;
-using Player.State;
+using Orbit.Planet;
+using Orbit.Player;
+using Orbit.Player.State;
 using Unity.Cinemachine;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game
+namespace Orbit.Game
 {
     public class GameLifeTimeScope : LifetimeScope
     {

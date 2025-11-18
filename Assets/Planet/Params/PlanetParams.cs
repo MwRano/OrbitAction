@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Planet
+namespace Orbit.Planet
 {
     [CreateAssetMenu(fileName = "PlanetParams", menuName = "Scriptable Objects/PlanetParams")]
     public class PlanetParams : ScriptableObject

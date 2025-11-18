@@ -1,10 +1,10 @@
 #nullable enable
 
+using Orbit.Core.StateMachine;
 using Unity.Cinemachine;
-using Core.StateMachine;
 using VContainer;
 
-namespace Player.State
+namespace Orbit.Player.State
 {
     public class Death : IState<PlayerStateMachine>
     {

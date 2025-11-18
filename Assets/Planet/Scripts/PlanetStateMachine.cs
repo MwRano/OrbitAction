@@ -1,7 +1,8 @@
 ﻿#nullable enable
+using Orbit.Core.StateMachine;
 using VContainer;
-using Core.StateMachine;
-namespace Planet
+
+namespace Orbit.Planet
 {
     /// <summary>
     /// planetの状態を管理するクラス

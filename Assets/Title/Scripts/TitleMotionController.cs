@@ -1,10 +1,10 @@
 #nullable enable
 using System.Collections.Generic;
-using UnityEngine;
 using LitMotion;
 using LitMotion.Extensions;
+using UnityEngine;
 
-namespace Title
+namespace Orbit.Title
 {
     /// <summary>
     /// title画面のモーション制御

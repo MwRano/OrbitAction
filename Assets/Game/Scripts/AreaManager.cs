@@ -1,9 +1,9 @@
-using Player;
+using Orbit.Player;
 using Unity.Cinemachine;
 using UnityEngine;
 using VContainer;
 
-namespace Game
+namespace Orbit.Game
 {
     /// <summary>
     /// PlayerがAreaの出入りに応じた処理を行うクラス

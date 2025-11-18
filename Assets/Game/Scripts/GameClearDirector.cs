@@ -1,10 +1,7 @@
-using Planet;
-using Player;
-using VContainer;
-using R3;
-using VContainer.Unity;
+using Orbit.Planet;
+using Orbit.Player;
 
-namespace Game
+namespace Orbit.Game
 {
     /// <summary>
     /// ゲームクリア時の演出を制御するクラス

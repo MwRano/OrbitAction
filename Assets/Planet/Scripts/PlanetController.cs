@@ -1,11 +1,11 @@
 ﻿#nullable enable
+using Orbit.Player;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
-using R3;
-using Player;
 
-namespace Planet
+namespace Orbit.Planet
 {
     /// <summary>
     /// Planetの挙動を制御するクラス

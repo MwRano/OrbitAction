@@ -1,11 +1,11 @@
 ﻿#nullable enable
 using LitMotion;
 using LitMotion.Extensions;
-using Player;
-using Core.StateMachine;
+using Orbit.Core.StateMachine;
+using Orbit.Player;
 using VContainer;
 
-namespace Planet
+namespace Orbit.Planet
 {
     public class Hover : IState<PlanetStateMachine>
     {

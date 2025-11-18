@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using R3;
+﻿using R3;
+using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace Orbit.Player
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
