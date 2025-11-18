@@ -6,7 +6,7 @@ using Orbit.Player;
 using UnityEngine;
 using VContainer;
 
-namespace Orbit.Planet
+namespace Orbit.Planet.State
 {
     /// <summary>
     /// planetの設置後の状態

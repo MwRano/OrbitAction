@@ -5,7 +5,7 @@ using Orbit.Core.StateMachine;
 using Orbit.Player;
 using VContainer;
 
-namespace Orbit.Planet
+namespace Orbit.Planet.State
 {
     public class Hover : IState<PlanetStateMachine>
     {

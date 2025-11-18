@@ -1,5 +1,6 @@
 #nullable enable
 using Orbit.Planet;
+using Orbit.Planet.State;
 using Orbit.Player;
 using Orbit.Player.State;
 using Unity.Cinemachine;
