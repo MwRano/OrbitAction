@@ -39,21 +39,21 @@ namespace Game
             builder.Register<PlayerRespawner>(Lifetime.Scoped);
             builder.Register<PlayerInput>(Lifetime.Scoped);
             builder.Register<PlayerAimer>(Lifetime.Scoped);
-            builder.Register<IdleState>(Lifetime.Scoped);
-            builder.Register<WalkState>(Lifetime.Scoped);
-            builder.Register<JumpState>(Lifetime.Scoped);
-            builder.Register<FallState>(Lifetime.Scoped);
-            builder.Register<DeathState>(Lifetime.Scoped);
+            builder.Register<Idle>(Lifetime.Scoped);
+            builder.Register<Walk>(Lifetime.Scoped);
+            builder.Register<Jump>(Lifetime.Scoped);
+            builder.Register<Fall>(Lifetime.Scoped);
+            builder.Register<Death>(Lifetime.Scoped);
 
             // Planet
             builder.RegisterEntryPoint<PlanetStateMachine>(Lifetime.Scoped).AsSelf();
             builder.RegisterComponentInHierarchy<PlanetController>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);
-            builder.Register<HoverState>(Lifetime.Scoped);
-            builder.Register<FollowState>(Lifetime.Scoped);
-            builder.Register<TravelState>(Lifetime.Scoped);
-            builder.Register<DeployState>(Lifetime.Scoped);
+            builder.Register<Hover>(Lifetime.Scoped);
+            builder.Register<Follow>(Lifetime.Scoped);
+            builder.Register<Travel>(Lifetime.Scoped);
+            builder.Register<Deploy>(Lifetime.Scoped);
         }
     }
 }

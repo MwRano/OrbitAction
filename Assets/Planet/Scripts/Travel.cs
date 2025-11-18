@@ -3,11 +3,12 @@ using LitMotion;
 using LitMotion.Extensions;
 using Player;
 using UnityEngine;
+using Core.StateMachine;
 using VContainer;
 
 namespace Planet
 {
-    public class TravelState : IPlanetState
+    public class Travel : IState<PlanetStateMachine>
     {
         private readonly DeployPositionCalculator _deployPositionCalculator;
         private readonly PlanetParams _planetParams;
@@ -17,7 +18,7 @@ namespace Planet
         private bool _isReached;
 
         [Inject]
-        public TravelState(
+        public Travel(
             PlayerCore player,
             PlayerAimer playerAimer,
             PlanetParams planetParams,

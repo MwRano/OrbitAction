@@ -1,15 +1,19 @@
 #nullable enable
 
 using Unity.Cinemachine;
+using Core.StateMachine;
+using VContainer;
 
 namespace Player.State
 {
-    public class DeathState : IPlayerState
+    public class Death : IState<PlayerStateMachine>
     {
         private readonly CinemachineImpulseSource _impulseSource;
         private PlayerCore _player;
 
-        public DeathState(CinemachineImpulseSource impulseSource,
+        [Inject]
+        public Death(
+            CinemachineImpulseSource impulseSource,
             PlayerCore player)
         {
             _impulseSource = impulseSource;

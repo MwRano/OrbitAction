@@ -1,13 +1,16 @@
 #nullable enable
 using UnityEngine;
+using Core.StateMachine;
+using VContainer;
 
 namespace Player.State
 {
-    public class FallState : IPlayerState
+    public class Fall : IState<PlayerStateMachine>
     {
         private readonly PlayerCore _player;
-
-        public FallState(PlayerCore player)
+        
+        [Inject]
+        public Fall(PlayerCore player)
         {
             _player = player;
         }

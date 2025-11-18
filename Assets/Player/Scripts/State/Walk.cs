@@ -1,13 +1,16 @@
 #nullable enable
 using UnityEngine;
+using Core.StateMachine;
+using VContainer;
 
 namespace Player.State
 {
-    public class WalkState : IPlayerState
+    public class Walk : IState<PlayerStateMachine>
     {
         private readonly PlayerCore _player;
-
-        public WalkState(PlayerCore player)
+        
+        [Inject]
+        public Walk(PlayerCore player)
         {
             _player = player;
         }

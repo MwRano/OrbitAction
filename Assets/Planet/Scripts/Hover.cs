@@ -2,19 +2,19 @@
 using LitMotion;
 using LitMotion.Extensions;
 using Player;
-using UnityEngine;
+using Core.StateMachine;
 using VContainer;
 
 namespace Planet
 {
-    public class HoverState : IPlanetState
+    public class Hover : IState<PlanetStateMachine>
     {
         private readonly PlayerCore _player;
         private MotionHandle _floatingMotion;
         private readonly PlanetController _planet;
 
         [Inject]
-        public HoverState(PlayerCore player, PlanetController planet)
+        public Hover(PlayerCore player, PlanetController planet)
         {
             _player = player;
             _planet = planet;

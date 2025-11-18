@@ -3,6 +3,7 @@ using LitMotion;
 using LitMotion.Extensions;
 using Player;
 using UnityEngine;
+using Core.StateMachine;
 using VContainer;
 
 namespace Planet
@@ -10,7 +11,7 @@ namespace Planet
     /// <summary>
     /// planetの設置後の状態
     /// </summary>
-    public class DeployState : IPlanetState
+    public class Deploy : IState<PlanetStateMachine>
     {
         private readonly CompositeMotionHandle _handles = new();
         private readonly PlanetParams _planetParams;
@@ -21,7 +22,7 @@ namespace Planet
         private readonly PlanetController _planet;
 
         [Inject]
-        public DeployState(
+        public Deploy(
             PlanetParams planetParams, 
             PlayerCore player,
             PlanetController planet)
