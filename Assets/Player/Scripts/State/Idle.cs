@@ -1,20 +1,23 @@
 #nullable enable
 using UnityEngine;
+using Core.StateMachine;
+using VContainer;
 
 namespace Player.State
 {
-    public class JumpState : IPlayerState
+    public class Idle : IState<PlayerStateMachine>
     {
         private readonly PlayerCore _player;
-
-        public JumpState(PlayerCore player)
+        
+        [Inject]
+        public Idle(PlayerCore player)
         {
             _player = player;
         }
 
         public void Enter()
         {
-            _player.Anim.SetTrigger(PlayerAnimationIds.JumpHash);
+            _player.Anim.SetTrigger(PlayerAnimationIds.IdleHash);
         }
 
         public void Update(PlayerStateMachine stateMachine)
@@ -28,17 +31,23 @@ namespace Player.State
             if (_player.IsGrounded.CurrentValue)
             {
                 // Walkへの遷移
-                if (Mathf.Abs(_player.Rb.linearVelocityX) > 0)
+                if (Mathf.Abs(_player.Rb.linearVelocityX) > 0.1f)
                 {
                     stateMachine.TransitionTo(stateMachine.Walk);
                 }
             }
             else
             {
-                // Fallへの遷移
-                if (_player.Rb.linearVelocityY < 0)
+                switch (_player.Rb.linearVelocityY)
                 {
-                    stateMachine.TransitionTo(stateMachine.Fall);
+                    // Jumpへの遷移
+                    case > 0:
+                        stateMachine.TransitionTo(stateMachine.Jump);
+                        break;
+                    // Fallへの遷移
+                    case < 0:
+                        stateMachine.TransitionTo(stateMachine.Fall);
+                        break;
                 }
             }
         }
