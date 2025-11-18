@@ -1,51 +1,34 @@
 ﻿#nullable enable
-using UnityEngine;
 using VContainer;
-using VContainer.Unity;
-
+using Core.StateMachine;
 namespace Planet
 {
     /// <summary>
     /// planetの状態を管理するクラス
     /// </summary>
-    public class PlanetStateMachine : IInitializable, ITickable
+    public class PlanetStateMachine : StateMachine<IState<PlanetStateMachine>, PlanetStateMachine>
     {
         [Inject]
         public PlanetStateMachine(
-            HoverState hoverState,
-            FollowState followState,
-            TravelState travelState,
-            DeployState deployState)
+            Hover hover,
+            Follow follow,
+            Travel travel,
+            Deploy deploy)
         {
-            Hover = hoverState;
-            Follow = followState;
-            Travel = travelState;
-            Deploy = deployState;
-        }
-
-        public IPlanetState CurrentState { get; private set; } = null!;
-        public HoverState Hover { get; }
-        public FollowState Follow { get; }
-        public TravelState Travel { get; }
-        public DeployState Deploy { get; }
-
-        public void Initialize()
-        {
-            CurrentState = Follow;
-            CurrentState.Enter();
-        }
-
-        public void TransitionTo(IPlanetState nextState)
-        {
-            CurrentState.Exit();
-            CurrentState = nextState;
-            nextState.Enter();
-        }
-
-        public void Tick()
-        {
-            CurrentState.Update(this);
+            Hover = hover;
+            Follow = follow;
+            Travel = travel;
+            Deploy = deploy;
         }
         
+        public Hover Hover { get; }
+        public Follow Follow { get; }
+        public Travel Travel { get; }
+        public Deploy Deploy { get; }
+
+        public override void Initialize()
+        {
+            SetInitialState(Follow);
+        }
     }
 }
