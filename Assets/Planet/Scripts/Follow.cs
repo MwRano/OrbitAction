@@ -3,11 +3,12 @@ using LitMotion;
 using LitMotion.Extensions;
 using Player;
 using UnityEngine;
+using Core.StateMachine;
 using VContainer;
 
 namespace Planet
 {
-    public class FollowState : IPlanetState
+    public class Follow : IState<PlanetStateMachine>
     {
         private readonly float _maxSpeed;
         private readonly PlayerCore _player;
@@ -18,7 +19,7 @@ namespace Planet
         private readonly PlanetController _planet;
 
         [Inject]
-        public FollowState(
+        public Follow(
             PlayerCore player, 
             PlanetParams planetParams,
             PlanetController planet)
