@@ -1,5 +1,6 @@
 using UnityEngine;
-using Utility;
+using LitMotion;
+using LitMotion.Extensions;
 
 namespace Stage
 {
@@ -13,7 +14,11 @@ namespace Stage
 
         private void Awake()
         {
-            MotionCreator.CreateFloatingMotion(transform, 0.1f, 1f);
+            LMotion.Create(transform.position.y, transform.position.y - 0.1f, 1f)
+                .WithEase(Ease.InOutSine)
+                .WithLoops(-1, LoopType.Yoyo)
+                .BindToPositionY(transform)
+                .AddTo(this);
         }
         
         private void FixedUpdate()
