@@ -2,54 +2,39 @@
 
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
+using Core.StateMachine;
 
 namespace Player.State
 {
     /// <summary>
     /// Playerの状態を管理するステートマシン
     /// </summary>
-    public class PlayerStateMachine : IInitializable, ITickable
+    public class PlayerStateMachine : StateMachine<IState<PlayerStateMachine>, PlayerStateMachine>
     {
-        private IPlayerState _currentState = null!;
-
         [Inject]
         public PlayerStateMachine(
-            IdleState idleState,
-            WalkState walkState,
-            JumpState jumpState,
-            FallState fallState,
-            DeathState deathState)
+            Idle idle,
+            Walk walk,
+            Jump jump,
+            Fall fall,
+            Death death)
         {
-            Idle = idleState;
-            Walk = walkState;
-            Jump = jumpState;
-            Fall = fallState;
-            Death = deathState;
+            Idle = idle;
+            Walk = walk;
+            Jump = jump;
+            Fall = fall;
+            Death = death;
         }
 
-        public IdleState Idle { get; }
-        public WalkState Walk { get; }
-        public JumpState Jump { get; }
-        public FallState Fall { get; }
-        public DeathState Death { get; }
+        public Idle Idle { get; }
+        public Walk Walk { get; }
+        public Jump Jump { get; }
+        public Fall Fall { get; }
+        public Death Death { get; }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            _currentState = Idle;
-            _currentState.Enter();
-        }
-
-        public void Tick()
-        {
-            _currentState.Update(this);
-        }
-
-        public void TransitionTo(IPlayerState nextState)
-        {
-            _currentState.Exit();
-            _currentState = nextState;
-            nextState.Enter();
+            SetInitialState(Idle);
         }
     }
 }
