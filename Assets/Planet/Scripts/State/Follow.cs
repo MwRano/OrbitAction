@@ -1,5 +1,4 @@
-﻿#nullable enable
-using LitMotion;
+﻿using LitMotion;
 using LitMotion.Extensions;
 using Orbit.Core.StateMachine;
 using Orbit.Player;
@@ -10,24 +9,26 @@ namespace Orbit.Planet.State
 {
     public class Follow : IState<PlanetStateMachine>
     {
-        private readonly float _maxSpeed;
+        private const float VelocityThreshold = 0.01f*0.01f;
+        
         private readonly PlayerCore _player;
-        private readonly PlayerMover _playerMover;
-        private readonly float _smoothTime;
+        private readonly PlanetCore _planet;
+        private readonly PlanetInput _planetInput;
+        private readonly PlanetParams _planetParams;
         private Vector2 _currentVelocity;
         private MotionHandle _rotationMotion;
-        private readonly PlanetController _planet;
 
         [Inject]
         public Follow(
             PlayerCore player, 
             PlanetParams planetParams,
-            PlanetController planet)
+            PlanetCore planet,
+            PlanetInput planetInput)
         {
             _player = player;
-            _smoothTime = planetParams.SmoothTime;
-            _maxSpeed = planetParams.MaxSpeed;
+            _planetParams = planetParams;
             _planet = planet;
+            _planetInput = planetInput;
         }
 
         public void Enter()
@@ -37,32 +38,21 @@ namespace Orbit.Planet.State
             _rotationMotion = LMotion.Create(0f, 360f, 30f)
                 .WithEase(Ease.Linear)
                 .WithLoops(-1)
-                .BindToLocalEulerAnglesZ(_planet.PlanetTransform)
-                .AddTo(_planet.PlanetTransform);
+                .BindToLocalEulerAnglesZ(_planet.transform)
+                .AddTo(_planet);
         }
 
         public void Update(PlanetStateMachine stateMachine)
         {
-            Vector2 playerPos = _player.Rb.transform.position;
-            Vector2 targetPosition = _player.Sprite.flipX　// playerの向きに応じて追従位置を変更
-                ? new Vector2(playerPos.x + 1, playerPos.y + 1)
-                : new Vector2(playerPos.x - 1, playerPos.y + 1);
-
-            _planet.PlanetTransform.position = Vector2.SmoothDamp(
-                _planet.PlanetTransform.position,
-                targetPosition,
-                ref _currentVelocity,
-                _smoothTime,
-                _maxSpeed
-            );
+            _planet.transform.position = CalculateFollowPosition();
 
             // 状態遷移の判定
-            if (_player.Rb.linearVelocity.sqrMagnitude < 0.01f &&
-                _currentVelocity.sqrMagnitude < 0.01f) // playerが停止したらIdleへ遷移
+            if (_player.Rb.linearVelocity.sqrMagnitude < VelocityThreshold &&
+                _currentVelocity.sqrMagnitude < VelocityThreshold) // playerが停止したらIdleへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Hover);
             }
-            else if (_planet.IsLaunched || _player.IsGoalReached.CurrentValue) // 発射されたらTravelへ遷移
+            else if (_planetInput.Launch.CurrentValue) // 発射されたらTravelへ遷移
             {
                 stateMachine.TransitionTo(stateMachine.Travel);
             }
@@ -70,6 +60,22 @@ namespace Orbit.Planet.State
 
         public void Exit()
         {
+        }
+        
+        private Vector2 CalculateFollowPosition() 
+        {
+            Vector2 playerPos = _player.transform.position;
+            var targetPos = _player.Sprite.flipX　// playerの向きに応じて追従位置を変更
+                ? new Vector2(playerPos.x + 1, playerPos.y + 1)
+                : new Vector2(playerPos.x - 1, playerPos.y + 1);
+
+            return Vector2.SmoothDamp(
+                _planet.transform.position,
+                targetPos,
+                ref _currentVelocity,
+                _planetParams.SmoothTime,
+                _planetParams.MaxSpeed
+            );
         }
     }
 }
