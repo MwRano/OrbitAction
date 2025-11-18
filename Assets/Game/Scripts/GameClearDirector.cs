@@ -8,17 +8,17 @@ namespace Orbit.Game
     /// </summary>
     public class GameClearDirector
     {
-        private PlanetController _planetController = null!;
+        private PlanetCore _planetCore = null!;
         private PlanetParams _planetParams = null!;
         private PlayerCore _player = null!;
 
         public GameClearDirector(
             PlayerCore player,
-            PlanetController planetController,
+            PlanetCore planetCore,
             PlanetParams planetParams)
         {
             _player = player;
-            _planetController = planetController;
+            _planetCore = planetCore;
             _planetParams = planetParams;
         }
 

@@ -1,5 +1,6 @@
 #nullable enable
 using Orbit.Planet;
+using Orbit.Planet.State;
 using Orbit.Player;
 using Orbit.Player.State;
 using Unity.Cinemachine;
@@ -30,12 +31,13 @@ namespace Orbit.Game
             // Input
             builder.Register<InputSystemActions>(Lifetime.Scoped);
             builder.Register<PlayerInput>(Lifetime.Scoped);
+            builder.Register<PlanetInput>(Lifetime.Scoped);
 
             // Player
             builder.RegisterEntryPoint<PlayerStateMachine>(Lifetime.Scoped);
-            builder.RegisterEntryPoint<PlayerMover>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerEffector>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlayerCore>();
+            builder.Register<PlayerMover>(Lifetime.Scoped);
             builder.Register<PlayerRespawner>(Lifetime.Scoped);
             builder.Register<PlayerInput>(Lifetime.Scoped);
             builder.Register<PlayerAimer>(Lifetime.Scoped);
@@ -47,7 +49,8 @@ namespace Orbit.Game
 
             // Planet
             builder.RegisterEntryPoint<PlanetStateMachine>(Lifetime.Scoped).AsSelf();
-            builder.RegisterComponentInHierarchy<PlanetController>();
+            builder.RegisterEntryPoint<PlanetSkill>(Lifetime.Scoped);
+            builder.RegisterComponentInHierarchy<PlanetCore>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);
             builder.Register<Hover>(Lifetime.Scoped);
