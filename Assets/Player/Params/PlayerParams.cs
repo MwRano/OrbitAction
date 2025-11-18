@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Orbit.Player
 {
     [CreateAssetMenu(fileName = "PlayerParam", menuName = "Scriptable Objects/PlayerParam")]
     public class PlayerParam : ScriptableObject

@@ -1,13 +1,13 @@
-﻿using Planet;
-using R3;
-using UnityEngine;
-using System;
+﻿using System;
 using System.Linq;
 using LitMotion;
 using LitMotion.Extensions;
+using Orbit.Planet;
+using R3;
+using UnityEngine;
 using VContainer.Unity;
 
-namespace Player
+namespace Orbit.Player
 {
     public class PlayerMover : ITickable
     {

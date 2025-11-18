@@ -1,9 +1,9 @@
 #nullable enable
+using Orbit.Core.StateMachine;
 using UnityEngine;
-using Core.StateMachine;
 using VContainer;
 
-namespace Player.State
+namespace Orbit.Player.State
 {
     public class Jump : IState<PlayerStateMachine>
     {

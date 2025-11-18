@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Linq;
 using R3;
-using System.Linq;
+using UnityEngine;
 using VContainer.Unity;
 
-namespace Player
+namespace Orbit.Player
 {
     public class PlayerEffector : IStartable
     {

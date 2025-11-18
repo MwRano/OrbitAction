@@ -1,9 +1,8 @@
 #nullable enable
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Title
+namespace Orbit.Title
 {
     public class TitleLifeTimeScope : LifetimeScope
     {

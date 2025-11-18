@@ -3,7 +3,7 @@ using R3;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace Orbit.Player
 {
     public class PlayerRespawner
     {

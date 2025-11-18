@@ -1,10 +1,10 @@
 #nullable enable
-using Player;
+using System;
+using Orbit.Player;
 using UnityEngine;
 using VContainer;
-using System;
 
-namespace Planet
+namespace Orbit.Planet
 {
     public class DeployPositionCalculator
     {

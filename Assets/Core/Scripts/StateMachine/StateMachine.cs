@@ -1,7 +1,7 @@
 #nullable enable
 using VContainer.Unity;
 
-namespace Core.StateMachine
+namespace Orbit.Core.StateMachine
 {
     public abstract class StateMachine<TState, TStateMachine> : IInitializable, ITickable
         where TState : class, IState<TStateMachine>

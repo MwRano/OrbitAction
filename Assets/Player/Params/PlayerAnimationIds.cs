@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Orbit.Player
 {
     /// <summary>
     /// Animatorのパラメータをhash値として管理する静的クラス

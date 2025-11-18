@@ -1,10 +1,9 @@
 #nullable enable
 
-using UnityEngine;
+using Orbit.Core.StateMachine;
 using VContainer;
-using Core.StateMachine;
 
-namespace Player.State
+namespace Orbit.Player.State
 {
     /// <summary>
     /// Playerの状態を管理するステートマシン

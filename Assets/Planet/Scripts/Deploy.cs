@@ -1,12 +1,12 @@
 ﻿#nullable enable
 using LitMotion;
 using LitMotion.Extensions;
-using Player;
+using Orbit.Core.StateMachine;
+using Orbit.Player;
 using UnityEngine;
-using Core.StateMachine;
 using VContainer;
 
-namespace Planet
+namespace Orbit.Planet
 {
     /// <summary>
     /// planetの設置後の状態

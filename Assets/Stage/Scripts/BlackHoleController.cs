@@ -1,8 +1,8 @@
-using UnityEngine;
 using LitMotion;
 using LitMotion.Extensions;
+using UnityEngine;
 
-namespace Stage
+namespace Orbit.Stage
 {
     public class BlackHoleController : MonoBehaviour
     {
