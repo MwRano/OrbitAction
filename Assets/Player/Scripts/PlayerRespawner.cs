@@ -1,4 +1,5 @@
 ﻿using System;
+using Orbit.Planet;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -7,15 +8,17 @@ namespace Orbit.Player
 {
     public class PlayerRespawner
     {
-        private Vector2 _respawnPosition;
+        private readonly PlanetCore _planet;
+        private readonly PlanetInput _planetInput;
         private readonly PlayerCore _player;
-        
-        public Action OnRespawn { get; set; }
-        
+        private Vector2 _respawnPosition;
+
         [Inject]
-        public PlayerRespawner(PlayerCore player)
+        public PlayerRespawner(PlayerCore player, PlanetCore planet, PlanetInput planetInput)
         {
             _player = player;
+            _planet = planet;
+            _planetInput = planetInput;
             player.IsDead
                 .Where(isDead => isDead)
                 .Subscribe(_ => Respawn())
@@ -30,13 +33,20 @@ namespace Orbit.Player
         private void Respawn()
         {
             _player.Rb.simulated = false;
+
+            // Deply状態のfloat motionの解除待つため、少し早くリセット
+            Observable.Timer(TimeSpan.FromSeconds(0.6f))
+                .Subscribe(_ => _planetInput.ResetLaunch())
+                .AddTo(_player);
+
             Observable.Timer(TimeSpan.FromSeconds(0.635f))
                 .Subscribe(_ =>
                 {
-                    OnRespawn?.Invoke();
-                    _player.Rb.transform.position = _respawnPosition;
+                    _player.transform.position = _respawnPosition;
                     _player.Rb.linearVelocity = Vector2.zero;
                     _player.Rb.simulated = true;
+
+                    _planet.transform.position = _respawnPosition + Vector2.one;
                 })
                 .AddTo(_player);
         }
