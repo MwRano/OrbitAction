@@ -8,6 +8,9 @@ namespace Orbit.Player
 {
     public class PlayerRespawner
     {
+        public ReadOnlyReactiveProperty<bool> IsRespawning => _isRespawning;
+        
+        private readonly ReactiveProperty<bool> _isRespawning = new();
         private readonly PlanetCore _planet;
         private readonly PlanetInput _planetInput;
         private readonly PlayerCore _player;
@@ -33,6 +36,7 @@ namespace Orbit.Player
         private void Respawn()
         {
             _player.Rb.simulated = false;
+            _isRespawning.Value = true;
 
             // Deply状態のfloat motionの解除待つため、少し早くリセット
             Observable.Timer(TimeSpan.FromSeconds(0.6f))
@@ -42,6 +46,7 @@ namespace Orbit.Player
             Observable.Timer(TimeSpan.FromSeconds(0.635f))
                 .Subscribe(_ =>
                 {
+                    _isRespawning.Value = false;
                     _player.transform.position = _respawnPosition;
                     _player.Rb.linearVelocity = Vector2.zero;
                     _player.Rb.simulated = true;
