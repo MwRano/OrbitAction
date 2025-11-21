@@ -36,18 +36,23 @@ namespace Orbit.Player
         private void Respawn()
         {
             _player.Rb.simulated = false;
-            _isRespawning.Value = true;
-
-            // Deply状態のfloat motionの解除待つため、少し早くリセット
-            Observable.Timer(TimeSpan.FromSeconds(0.6f))
-                .Subscribe(_ => _planetInput.ResetLaunch())
-                .AddTo(_player);
-
-            Observable.Timer(TimeSpan.FromSeconds(0.635f))
+            
+            // Death animationの待機
+            Observable.Timer(TimeSpan.FromSeconds(0.62f))
                 .Subscribe(_ =>
                 {
+                    _isRespawning.Value = true;
+                    _player.Sprite.enabled = false;
+                })
+                .AddTo(_player);
+            
+            Observable.Timer(TimeSpan.FromSeconds(1.2f))
+                .Subscribe(_ =>
+                {
+                    _planetInput.ResetLaunch();
                     _isRespawning.Value = false;
                     _player.transform.position = _respawnPosition;
+                    _player.Sprite.enabled = true;
                     _player.Rb.linearVelocity = Vector2.zero;
                     _player.Rb.simulated = true;
 
