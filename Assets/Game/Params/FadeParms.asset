@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: FadeParms
   m_EditorClassIdentifier: 
   fadeMat: {fileID: 2100000, guid: 3fa1cf3fb22347147a557122a80dff58, type: 2}
+  fadeTime: 0.3

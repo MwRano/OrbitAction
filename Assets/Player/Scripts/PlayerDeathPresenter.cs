@@ -20,6 +20,7 @@ namespace Orbit.Player
 
             playerRespawner.IsRespawning
                 .Where(isRespawning => !isRespawning)
+                .Skip(1)
                 .Subscribe(_ => screenFader.FadeIn())
                 .AddTo(player);
         }
