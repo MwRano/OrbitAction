@@ -18,7 +18,7 @@ namespace Orbit.Game
 
         public void FadeIn()
         {
-            LMotion.Create(1.0f, 0f, 0.5f)
+            LMotion.Create(1.0f, 0f, _fadeParams.FadeTime)
                 .WithEase(Ease.Linear)
                 .Bind(value => _fadeParams.FadeMat.SetFloat(FadeAmount, value));
         }
@@ -26,7 +26,7 @@ namespace Orbit.Game
         public void FadeOut()
         {
             _fadeParams.FadeMat.SetInt(FlipX, 1);
-            LMotion.Create(0, 1.0f, 0.5f)
+            LMotion.Create(0, 1.0f, _fadeParams.FadeTime)
                 .WithEase(Ease.Linear)
                 .WithOnComplete(() => _fadeParams.FadeMat.SetInt(FlipX, 0))
                 .Bind(value => _fadeParams.FadeMat.SetFloat(FadeAmount, value));

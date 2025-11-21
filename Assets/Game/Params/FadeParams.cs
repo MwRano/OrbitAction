@@ -6,6 +6,9 @@ namespace Orbit.Game
     public class FadeParams : ScriptableObject
     {
         [SerializeField] private Material fadeMat;
+        [SerializeField] private float fadeTime;
+        
         public Material FadeMat => fadeMat;
+        public float FadeTime => fadeTime;
     }
 }
