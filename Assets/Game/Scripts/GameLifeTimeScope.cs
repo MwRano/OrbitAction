@@ -12,9 +12,10 @@ namespace Orbit.Game
 {
     public class GameLifeTimeScope : LifetimeScope
     {
-        [SerializeField] PlayerParam playerParam = null!;
-        [SerializeField] PlanetParams planetParams = null!;
-        [SerializeField] PlayerEffectParams playerEffectParams = null!;
+        [SerializeField] private PlayerParam playerParam = null!;
+        [SerializeField] private PlanetParams planetParams = null!;
+        [SerializeField] private PlayerEffectParams playerEffectParams = null!;
+        [SerializeField] private FadeParams fadeParams = null!;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -22,9 +23,11 @@ namespace Orbit.Game
             builder.RegisterInstance(playerParam).AsImplementedInterfaces();
             builder.RegisterInstance(planetParams).AsImplementedInterfaces();
             builder.RegisterInstance(playerEffectParams).AsImplementedInterfaces();
+            builder.RegisterInstance(fadeParams).AsImplementedInterfaces();
 
             //Game
             builder.RegisterEntryPoint<GameClearDirector>(Lifetime.Scoped);
+            builder.Register<ScreenFader>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<CinemachineImpulseSource>();
             builder.RegisterComponentInHierarchy<AreaManager>();
 
@@ -36,6 +39,7 @@ namespace Orbit.Game
             // Player
             builder.RegisterEntryPoint<PlayerStateMachine>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerEffector>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<PlayerDeathPresenter>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlayerCore>();
             builder.Register<PlayerMover>(Lifetime.Scoped);
             builder.Register<PlayerRespawner>(Lifetime.Scoped);
