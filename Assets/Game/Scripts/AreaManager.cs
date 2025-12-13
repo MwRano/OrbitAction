@@ -5,8 +5,8 @@ namespace Orbit.Game
 {
     public class AreaManager : MonoBehaviour
     {
-        private const int ActivePriority = 1;
-        private const int InactivePriority = 0;
+        private const int ActivePriority = 11;
+        private const int InactivePriority = 10;
         [SerializeField] private CinemachineCamera virtualCamera;
         [SerializeField] private Transform respawnPoint;
         [SerializeField] private CinemachineImpulseSource impulseSource;
