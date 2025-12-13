@@ -29,7 +29,6 @@ namespace Orbit.Game
             builder.RegisterEntryPoint<GameClearDirector>(Lifetime.Scoped);
             builder.Register<ScreenFader>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<CinemachineImpulseSource>();
-            builder.RegisterComponentInHierarchy<AreaManager>();
             builder.RegisterComponentInHierarchy<SoundManager>();
 
             // Input
