@@ -1,6 +1,7 @@
 ﻿using System;
 using Orbit.Planet;
 using R3;
+using R3.Triggers;
 using UnityEngine;
 using VContainer;
 
@@ -8,8 +9,6 @@ namespace Orbit.Player
 {
     public class PlayerRespawner
     {
-        public ReadOnlyReactiveProperty<bool> IsRespawning => _isRespawning;
-        
         private readonly ReactiveProperty<bool> _isRespawning = new();
         private readonly PlanetCore _planet;
         private readonly PlanetInput _planetInput;
@@ -26,9 +25,15 @@ namespace Orbit.Player
                 .Where(isDead => isDead)
                 .Subscribe(_ => Respawn())
                 .AddTo(player);
+
+            _player.Collider.OnTriggerEnter2DAsObservable()
+                .Where(other => other.CompareTag("RespawnPoint"))
+                .Subscribe(other => SetRespawnPosition(other.transform.position));
         }
 
-        public void SetRespawnPosition(Vector2 respawnPosition)
+        public ReadOnlyReactiveProperty<bool> IsRespawning => _isRespawning;
+
+        private void SetRespawnPosition(Vector2 respawnPosition)
         {
             _respawnPosition = respawnPosition;
         }
@@ -36,7 +41,7 @@ namespace Orbit.Player
         private void Respawn()
         {
             _player.Rb.simulated = false;
-            
+
             // Death animationの待機
             Observable.Timer(TimeSpan.FromSeconds(0.62f))
                 .Subscribe(_ =>
@@ -45,7 +50,7 @@ namespace Orbit.Player
                     _player.Sprite.enabled = false;
                 })
                 .AddTo(_player);
-            
+
             Observable.Timer(TimeSpan.FromSeconds(1.2f))
                 .Subscribe(_ =>
                 {
