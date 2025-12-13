@@ -7,35 +7,20 @@ namespace Orbit.Player
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(CapsuleCollider2D))]
     public class PlayerCore : MonoBehaviour
     {
-        private PlayerParam _playerParams;
         private readonly ReactiveProperty<bool> _isGoalReached = new();
         private readonly ReactiveProperty<bool> _isGrounded = new();
-        
+        private PlayerParam _playerParams;
+
         public Rigidbody2D Rb => GetComponent<Rigidbody2D>();
         public SpriteRenderer Sprite => GetComponent<SpriteRenderer>();
         public Animator Anim => GetComponent<Animator>();
+        public Collider2D Collider => GetComponent<CapsuleCollider2D>();
         public ReactiveProperty<bool> IsDead { get; } = new();
         public ReadOnlyReactiveProperty<bool> IsGoalReached => _isGoalReached;
         public ReadOnlyReactiveProperty<bool> IsGrounded => _isGrounded;
-        
-        [Inject]
-        public void Construct(PlayerParam playerParam)
-        {
-            _playerParams = playerParam;
-        }
-        
-        public void CheckBuried()
-        {
-            var isBuried = Physics2D.OverlapCircle(
-                transform.position,
-                _playerParams.GroundCheckRadius,
-                _playerParams.GroundLayer);
-            if (!isBuried) return;
-
-            IsDead.Value = true;
-        }
 
         private void Update()
         {
@@ -58,7 +43,24 @@ namespace Orbit.Player
         {
             IsDead.Value = false;
         }
-        
+
+        [Inject]
+        public void Construct(PlayerParam playerParam)
+        {
+            _playerParams = playerParam;
+        }
+
+        public void CheckBuried()
+        {
+            var isBuried = Physics2D.OverlapCircle(
+                transform.position,
+                _playerParams.GroundCheckRadius,
+                _playerParams.GroundLayer);
+            if (!isBuried) return;
+
+            IsDead.Value = true;
+        }
+
 
         private bool CheckGrounded()
         {
