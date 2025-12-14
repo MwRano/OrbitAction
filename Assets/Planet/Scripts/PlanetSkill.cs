@@ -12,14 +12,14 @@ namespace Orbit.Planet
 {
     public class PlanetSkill : ITickable
     {
-        private readonly PlanetParams _planetParams;
-        private readonly PlanetCore _planet;
-        private readonly PlayerCore _player;
-        private readonly PlayerMover _playerMover;
         private readonly DeployPositionCalculator _deployPositionCalculator;
+        private readonly PlanetCore _planet;
+        private readonly PlanetParams _planetParams;
+        private readonly PlayerCore _player;
         private readonly PlayerAimer _playerAimer;
+        private readonly PlayerMover _playerMover;
         private bool _isOrbiting;
-        
+
         [Inject]
         public PlanetSkill(
             PlanetParams planetParams,
@@ -37,13 +37,13 @@ namespace Orbit.Planet
             _playerMover = playerMover;
             _deployPositionCalculator = deployPositionCalculator;
             _playerAimer = playerAimer;
-            
+
             planetInput.Orbit
                 .Where(isOrbit => isOrbit &&
                                   planetStateMachine.CurrentState == planetStateMachine.Deploy)
                 .Subscribe(_ => Orbit())
                 .AddTo(planet);
-            
+
             planetInput.Launch
                 .Where(isLaunch => isLaunch &&
                                    planetStateMachine.CurrentState == planetStateMachine.Hover　||
@@ -58,6 +58,12 @@ namespace Orbit.Planet
 
         private void Launch()
         {
+            // 滞空時、スキルの使いやすさのために位置固定
+            if (!_player.IsGrounded.CurrentValue)
+            {
+                _player.Rb.constraints = RigidbodyConstraints2D.FreezePosition;
+            }
+
             // 移動モーション 
             var planetRadius = _planet.PlanetView.bounds.extents.x;
             var destPos = _deployPositionCalculator.Calculate(
@@ -70,6 +76,16 @@ namespace Orbit.Planet
             // deply地点にlaunch
             LMotion.Create((Vector2)_planet.transform.position, destPos, _planetParams.LaunchTime)
                 .WithEase(Ease.OutCubic)
+                .WithOnComplete(() =>
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(0.5f))
+                        .Subscribe(_ =>
+                        {
+                            _player.Rb.constraints = RigidbodyConstraints2D.None
+                                                     | RigidbodyConstraints2D.FreezeRotation;
+                        })
+                        .AddTo(_player);
+                })
                 .BindToPositionXY(_planet.transform)
                 .AddTo(_planet);
         }
@@ -77,8 +93,8 @@ namespace Orbit.Planet
         private void Orbit()
         {
             var colliders = GetCollidersInCircle(
-                _planet.transform.position, 
-                _planetParams.OrbitalRange, 
+                _planet.transform.position,
+                _planetParams.OrbitalRange,
                 "Orbitable");
             if (colliders.Length == 0 || _isOrbiting) return;
 
@@ -87,7 +103,6 @@ namespace Orbit.Planet
             {
                 CreateOrbitMotion(_planet.transform.position, col.attachedRigidbody);
             }
-            
         }
 
         private Collider2D[] GetCollidersInCircle(Vector2 centerPosition, float radius, string layerTag)
@@ -114,7 +129,8 @@ namespace Orbit.Planet
                 .BindToLocalPositionXY(targetRb.transform);
 
             // 拡大縮小モーション(手前に公転してるイメージ)
-            LMotion.Create(targetRb.transform.localScale, targetRb.transform.localScale * 1.5f, _planetParams.OrbitalTime / 2)
+            LMotion.Create(targetRb.transform.localScale, targetRb.transform.localScale * 1.5f,
+                    _planetParams.OrbitalTime / 2)
                 .WithLoops(2, LoopType.Yoyo)
                 .WithEase(Ease.Linear)
                 .WithOnComplete(() =>
