@@ -83,6 +83,7 @@ namespace Orbit.Planet
                         {
                             _player.Rb.constraints = RigidbodyConstraints2D.None
                                                      | RigidbodyConstraints2D.FreezeRotation;
+                            _player.Rb.WakeUp();
                         })
                         .AddTo(_player);
                 })
