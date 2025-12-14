@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
 
 namespace Editor
 {
@@ -21,31 +22,54 @@ namespace Editor
         private static void OnTileMapChanged(Tilemap tilemap, Tilemap.SyncTile[] changes)
         {
             var isAutoFit = EditorPrefs.GetBool("StageScreen.IsAutoFit", false);
-            if (tilemap.gameObject.layer != LayerMask.NameToLayer("Ground") || !isAutoFit)
+            if (!isAutoFit)
+                return;
+
+            if (tilemap.gameObject.layer != LayerMask.NameToLayer("Ground"))
                 return;　// Groundレイヤーのタイルマップのみ処理
 
             var box = tilemap.transform.root.gameObject.GetComponent<BoxCollider2D>();
-            if (box == null) return;
+            if (box == null)
+                return;
 
-            FitBoxCollider(tilemap, box);
+            // Groundレイヤーのみ対象
+            var tilemaps = box.GetComponentsInChildren<Tilemap>()
+                .Where(c => c.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                .ToArray();
+
+            FitBoxCollider(tilemaps, box);
         }
 
         // タイルマップに合わせてBoxCollider2Dを調整
-        private static void FitBoxCollider(Tilemap tilemap, BoxCollider2D box)
+        private static void FitBoxCollider(Tilemap[] tilemaps, BoxCollider2D box)
         {
-            tilemap.CompressBounds();
-
             // 設定の読み込み
             var height = EditorPrefs.GetFloat(HeightKey, 18f);
             var width = EditorPrefs.GetFloat(WidthKey, 20f);
 
-            // タイルマップの境界に基づいてサイズと中心を計算
-            var bounds = tilemap.localBounds;
-            var sizeX = Mathf.Max(bounds.max.x - bounds.min.x, width);
-            var sizeY = Mathf.Max(bounds.max.y - bounds.min.y, height);
-            var centerX = bounds.min.x + sizeX * 0.5f;
-            var centerY = bounds.min.y + sizeY * 0.5f;
+            // フィット後のスクリーン座標計算
+            var origin = new Vector2(float.MinValue, float.MinValue);
+            var topRight = new Vector2(float.MaxValue, float.MaxValue);
 
+            // 対象のタイルマップ境界を取得
+            foreach (var tm in tilemaps)
+            {
+                tm.CompressBounds();
+                var bounds = tm.localBounds;
+
+                origin.x = Mathf.Max(origin.x, bounds.max.x);
+                origin.y = Mathf.Max(origin.y, bounds.max.y);
+                topRight.x = Mathf.Min(topRight.x, bounds.min.x);
+                topRight.y = Mathf.Min(topRight.y, bounds.min.y);
+            }
+
+            // サイズと中心位置計算
+            var sizeX = Mathf.Max(origin.x - topRight.x, width);
+            var sizeY = Mathf.Max(origin.y - topRight.y, height);
+            var centerX = topRight.x + sizeX * 0.5f;
+            var centerY = topRight.y + sizeY * 0.5f;
+
+            // BoxCollider2Dの更新
             Undo.RecordObject(box, "Auto Fit Stage Collider");
             box.size = new Vector2(sizeX, sizeY);
             box.offset = new Vector2(centerX, centerY);
