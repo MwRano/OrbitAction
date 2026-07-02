@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 7
   jumpForce: 9
+  planetAttractInitialImpulse: 30
+  planetAttractForce: 1
+  planetAttractMaxSpeed: 18
   groundCheckOffset: {x: 0, y: -1}
   groundLayer:
     serializedVersion: 2

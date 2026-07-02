@@ -136,6 +136,15 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attract"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f4ec42b-8f5b-4cc9-87b5-587cfb74f1f3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -345,6 +354,28 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Orbit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f72441c0-54af-4f57-974c-d71da275e5c1"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Attract"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d73e58db-9787-4107-a21b-11cb73921108"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Attract"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1040,6 +1071,7 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
         m_Player_Orbit = m_Player.FindAction("Orbit", throwIfNotFound: true);
+        m_Player_Attract = m_Player.FindAction("Attract", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1143,6 +1175,7 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Aim;
     private readonly InputAction m_Player_Orbit;
+    private readonly InputAction m_Player_Attract;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1174,6 +1207,10 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Orbit".
         /// </summary>
         public InputAction @Orbit => m_Wrapper.m_Player_Orbit;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Attract".
+        /// </summary>
+        public InputAction @Attract => m_Wrapper.m_Player_Attract;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1215,6 +1252,9 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @Orbit.started += instance.OnOrbit;
             @Orbit.performed += instance.OnOrbit;
             @Orbit.canceled += instance.OnOrbit;
+            @Attract.started += instance.OnAttract;
+            @Attract.performed += instance.OnAttract;
+            @Attract.canceled += instance.OnAttract;
         }
 
         /// <summary>
@@ -1241,6 +1281,9 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
             @Orbit.started -= instance.OnOrbit;
             @Orbit.performed -= instance.OnOrbit;
             @Orbit.canceled -= instance.OnOrbit;
+            @Attract.started -= instance.OnAttract;
+            @Attract.performed -= instance.OnAttract;
+            @Attract.canceled -= instance.OnAttract;
         }
 
         /// <summary>
@@ -1683,6 +1726,13 @@ public partial class @InputSystemActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnOrbit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attract" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttract(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
