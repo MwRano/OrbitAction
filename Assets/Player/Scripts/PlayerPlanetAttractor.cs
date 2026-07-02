@@ -15,7 +15,9 @@ namespace Orbit.Player
         private readonly PlanetStateMachine _planetStateMachine;
         private readonly PlayerCore _player;
         private readonly PlayerParam _playerParam;
+        private bool _canAttract = true;
         private bool _isAttracting;
+        private bool _wasGrounded;
 
         [Inject]
         public PlayerPlanetAttractor(
@@ -31,10 +33,15 @@ namespace Orbit.Player
             _planet = planet;
             _planetParams = planetParams;
             _planetStateMachine = planetStateMachine;
+            _wasGrounded = player.IsGrounded.CurrentValue;
 
             planetInput.Orbit
-                .Where(isOrbit => isOrbit && CanAttract())
+                .Where(isOrbit => isOrbit && _canAttract && CanAttract())
                 .Subscribe(_ => StartAttract())
+                .AddTo(_player);
+
+            Observable.EveryUpdate()
+                .Subscribe(_ => ResetAttractOnLanding())
                 .AddTo(_player);
 
             Observable.EveryUpdate(UnityFrameProvider.FixedUpdate)
@@ -65,6 +72,7 @@ namespace Orbit.Player
             }
 
             _isAttracting = true;
+            _canAttract = false;
             _player.Rb.AddForce(
                 direction.normalized * CalculateInitialImpulse(distance),
                 ForceMode2D.Impulse);
@@ -110,6 +118,17 @@ namespace Orbit.Player
         private bool IsInOrbitalRange(float distance)
         {
             return distance <= _planetParams.OrbitalRange;
+        }
+
+        private void ResetAttractOnLanding()
+        {
+            var isGrounded = _player.IsGrounded.CurrentValue;
+            if (!_canAttract && !_wasGrounded && isGrounded)
+            {
+                _canAttract = true;
+            }
+
+            _wasGrounded = isGrounded;
         }
 
         private float CalculateInitialImpulse(float distance)
