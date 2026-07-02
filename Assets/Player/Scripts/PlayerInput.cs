@@ -13,14 +13,12 @@ namespace Orbit.Player
         private readonly ReactiveProperty<Vector2> _aim = new();
         private readonly ReactiveProperty<bool> _jump = new();
         private readonly ReactiveProperty<bool> _orbit = new();
-        private readonly ReactiveProperty<bool> _attract = new();
         
         public Vector2 Move { get; private set; }
         public ReadOnlyReactiveProperty<Vector2> Look => _look;
         public ReadOnlyReactiveProperty<Vector2> Aim=> _aim;
         public ReadOnlyReactiveProperty<bool> Jump => _jump;
         public ReadOnlyReactiveProperty<bool> Orbit => _orbit;
-        public ReadOnlyReactiveProperty<bool> Attract => _attract;
 
         [Inject]
         public PlayerInput(InputSystemActions inputSystemActions)
@@ -35,8 +33,6 @@ namespace Orbit.Player
             _inputSystemActions.Player.Jump.canceled += OnJump;
             _inputSystemActions.Player.Orbit.performed += OnOrbit;
             _inputSystemActions.Player.Orbit.canceled += OnOrbit;
-            _inputSystemActions.Player.Attract.performed += OnAttract;
-            _inputSystemActions.Player.Attract.canceled += OnAttract;
 
             _inputSystemActions.Player.Enable();
         }
@@ -51,8 +47,6 @@ namespace Orbit.Player
             _inputSystemActions.Player.Jump.canceled -= OnJump;
             _inputSystemActions.Player.Orbit.performed -= OnOrbit;
             _inputSystemActions.Player.Orbit.canceled -= OnOrbit;
-            _inputSystemActions.Player.Attract.performed -= OnAttract;
-            _inputSystemActions.Player.Attract.canceled -= OnAttract;
 
             _inputSystemActions.Player.Disable();
         }
@@ -80,11 +74,6 @@ namespace Orbit.Player
         private void OnOrbit(InputAction.CallbackContext context)
         {
             _orbit.Value = context.ReadValueAsButton();
-        }
-
-        private void OnAttract(InputAction.CallbackContext context)
-        {
-            _attract.Value = context.ReadValueAsButton();
         }
     }
 }

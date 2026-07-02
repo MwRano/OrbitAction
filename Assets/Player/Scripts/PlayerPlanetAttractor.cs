@@ -20,9 +20,9 @@ namespace Orbit.Player
         [Inject]
         public PlayerPlanetAttractor(
             PlayerCore player,
-            PlayerInput playerInput,
             PlayerParam playerParam,
             PlanetCore planet,
+            PlanetInput planetInput,
             PlanetParams planetParams,
             PlanetStateMachine planetStateMachine)
         {
@@ -32,8 +32,8 @@ namespace Orbit.Player
             _planetParams = planetParams;
             _planetStateMachine = planetStateMachine;
 
-            playerInput.Attract
-                .Where(isAttract => isAttract && CanAttract())
+            planetInput.Orbit
+                .Where(isOrbit => isOrbit && CanAttract())
                 .Subscribe(_ => StartAttract())
                 .AddTo(_player);
 
@@ -76,8 +76,13 @@ namespace Orbit.Player
             var direction = (Vector2)_planet.transform.position - _player.Rb.position;
             var distance = direction.magnitude;
             if (!CanAttract() ||
-                IsInOrbitalRange(distance) ||
                 direction.sqrMagnitude <= MinDistanceSqr)
+            {
+                _isAttracting = false;
+                return;
+            }
+
+            if (IsInOrbitalRange(distance))
             {
                 _isAttracting = false;
                 return;
