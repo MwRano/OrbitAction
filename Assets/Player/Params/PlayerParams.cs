@@ -9,6 +9,11 @@ namespace Orbit.Player
 
         [Header("ジャンプ")] [SerializeField] private float jumpForce;
 
+        [Header("Planet引力")]
+        [SerializeField] private float planetAttractInitialImpulse = 12f;
+        [SerializeField] private float planetAttractForce = 55f;
+        [SerializeField] private float planetAttractMaxSpeed = 18f;
+
         [SerializeField] private Vector2 groundCheckOffset;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float groundCheckRadius;
@@ -16,6 +21,9 @@ namespace Orbit.Player
         public float MoveSpeed => moveSpeed;
 
         public float JumpForce => jumpForce;
+        public float PlanetAttractInitialImpulse => planetAttractInitialImpulse;
+        public float PlanetAttractForce => planetAttractForce;
+        public float PlanetAttractMaxSpeed => planetAttractMaxSpeed;
         public Vector2 GroundCheckOffset => groundCheckOffset;
         public LayerMask GroundLayer => groundLayer;
         public float GroundCheckRadius => groundCheckRadius;

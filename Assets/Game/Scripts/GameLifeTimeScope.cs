@@ -40,6 +40,7 @@ namespace Orbit.Game
             builder.RegisterEntryPoint<PlayerStateMachine>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerEffector>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerDeathPresenter>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<PlayerPlanetAttractor>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlayerCore>();
             builder.Register<PlayerMover>(Lifetime.Scoped);
             builder.Register<PlayerRespawner>(Lifetime.Scoped);
@@ -54,6 +55,7 @@ namespace Orbit.Game
             // Planet
             builder.RegisterEntryPoint<PlanetStateMachine>(Lifetime.Scoped).AsSelf();
             builder.RegisterEntryPoint<PlanetSkill>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<PlanetLaunchSlowMotion>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlanetCore>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);

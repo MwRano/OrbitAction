@@ -46,8 +46,8 @@ namespace Orbit.Planet
 
             planetInput.Launch
                 .Where(isLaunch => isLaunch &&
-                                   planetStateMachine.CurrentState == planetStateMachine.Hover　||
-                                   planetStateMachine.CurrentState == planetStateMachine.Follow)
+                                   (planetStateMachine.CurrentState == planetStateMachine.Hover　||
+                                    planetStateMachine.CurrentState == planetStateMachine.Follow))
                 .Subscribe(_ => Launch())
                 .AddTo(planet);
         }
@@ -92,6 +92,8 @@ namespace Orbit.Planet
 
         private void Orbit()
         {
+            if (!IsPlayerInOrbitalRange()) return;
+
             var colliders = GetCollidersInCircle(
                 _planet.transform.position,
                 _planetParams.OrbitalRange,
@@ -103,6 +105,12 @@ namespace Orbit.Planet
             {
                 CreateOrbitMotion(_planet.transform.position, col.attachedRigidbody);
             }
+        }
+
+        private bool IsPlayerInOrbitalRange()
+        {
+            var distanceSqr = ((Vector2)_player.transform.position - (Vector2)_planet.transform.position).sqrMagnitude;
+            return distanceSqr <= _planetParams.OrbitalRange * _planetParams.OrbitalRange;
         }
 
         private Collider2D[] GetCollidersInCircle(Vector2 centerPosition, float radius, string layerTag)

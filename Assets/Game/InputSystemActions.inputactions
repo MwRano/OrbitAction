@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputSystemActions",
     "maps": [
         {
@@ -45,6 +46,15 @@
                     "name": "Orbit",
                     "type": "Button",
                     "id": "e2463713-2652-402e-979c-75701e979122",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attract",
+                    "type": "Button",
+                    "id": "7f4ec42b-8f5b-4cc9-87b5-587cfb74f1f3",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -219,17 +229,6 @@
                 },
                 {
                     "name": "",
-                    "id": "603f3daf-40bd-4854-8724-93e8017f59e3",
-                    "path": "<XRController>/secondaryButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
                     "path": "<Mouse>/position",
                     "interactions": "",
@@ -242,7 +241,7 @@
                 {
                     "name": "",
                     "id": "3019fafe-8012-4844-b060-10146b82e5dd",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -258,6 +257,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Orbit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f72441c0-54af-4f57-974c-d71da275e5c1",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Attract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d73e58db-9787-4107-a21b-11cb73921108",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Attract",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -806,7 +827,7 @@
                 {
                     "name": "",
                     "id": "76bd3fc8-7cf2-457f-be40-c25e0da73ef1",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -849,19 +870,8 @@
                 },
                 {
                     "name": "",
-                    "id": "908696a5-f5d8-44ab-98b7-a1a1799e88f3",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Orbit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "ad90eaa6-a241-491d-8e3d-b4b508883012",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
