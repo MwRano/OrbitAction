@@ -46,8 +46,8 @@ namespace Orbit.Planet
 
             planetInput.Launch
                 .Where(isLaunch => isLaunch &&
-                                   planetStateMachine.CurrentState == planetStateMachine.Hover　||
-                                   planetStateMachine.CurrentState == planetStateMachine.Follow)
+                                   (planetStateMachine.CurrentState == planetStateMachine.Hover　||
+                                    planetStateMachine.CurrentState == planetStateMachine.Follow))
                 .Subscribe(_ => Launch())
                 .AddTo(planet);
         }

@@ -54,6 +54,7 @@ namespace Orbit.Game
             // Planet
             builder.RegisterEntryPoint<PlanetStateMachine>(Lifetime.Scoped).AsSelf();
             builder.RegisterEntryPoint<PlanetSkill>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<PlanetLaunchSlowMotion>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlanetCore>();
             builder.RegisterComponentInHierarchy<PlanetGuide>();
             builder.Register<DeployPositionCalculator>(Lifetime.Scoped);

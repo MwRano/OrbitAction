@@ -8,6 +8,7 @@ namespace Orbit.Planet
     public class PlanetInput : IDisposable
     {
         private readonly InputSystemActions _inputSystemActions;
+        private readonly ReactiveProperty<bool> _isPreparingLaunch = new();
         private readonly ReactiveProperty<bool> _launch = new();
         private readonly ReactiveProperty<bool> _orbit = new();
 
@@ -18,11 +19,13 @@ namespace Orbit.Planet
 
             _inputSystemActions.Planet.Orbit.performed += OnOrbit;
             _inputSystemActions.Planet.Orbit.canceled += OnOrbit;
-            _inputSystemActions.Planet.Launch.performed += OnLaunch;
+            _inputSystemActions.Planet.Launch.started += OnLaunchStarted;
+            _inputSystemActions.Planet.Launch.canceled += OnLaunchCanceled;
 
             _inputSystemActions.Planet.Enable();
         }
 
+        public ReadOnlyReactiveProperty<bool> IsPreparingLaunch => _isPreparingLaunch;
         public ReadOnlyReactiveProperty<bool> Orbit => _orbit;
         public ReadOnlyReactiveProperty<bool> Launch => _launch;
 
@@ -30,13 +33,15 @@ namespace Orbit.Planet
         {
             _inputSystemActions.Planet.Orbit.performed -= OnOrbit;
             _inputSystemActions.Planet.Orbit.canceled -= OnOrbit;
-            _inputSystemActions.Planet.Launch.performed -= OnLaunch;
+            _inputSystemActions.Planet.Launch.started -= OnLaunchStarted;
+            _inputSystemActions.Planet.Launch.canceled -= OnLaunchCanceled;
 
             _inputSystemActions.Planet.Disable();
         }
 
         public void ResetLaunch()
         {
+            _isPreparingLaunch.Value = false;
             _launch.Value = false;
         }
 
@@ -45,9 +50,23 @@ namespace Orbit.Planet
             _orbit.Value = context.ReadValueAsButton();
         }
 
-        private void OnLaunch(InputAction.CallbackContext context)
+        private void OnLaunchStarted(InputAction.CallbackContext context)
         {
-            _launch.Value ^= context.ReadValueAsButton();
+            if (_launch.CurrentValue)
+            {
+                _launch.Value = false;
+                return;
+            }
+
+            _isPreparingLaunch.Value = true;
+        }
+
+        private void OnLaunchCanceled(InputAction.CallbackContext context)
+        {
+            if (!_isPreparingLaunch.CurrentValue) return;
+
+            _isPreparingLaunch.Value = false;
+            _launch.Value = true;
         }
     }
 }
