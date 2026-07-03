@@ -13,6 +13,10 @@ namespace Orbit.Player
         [SerializeField] private float planetAttractInitialImpulse = 12f;
         [SerializeField] private float planetAttractForce = 55f;
         [SerializeField] private float planetAttractMaxSpeed = 18f;
+        [Range(0f, 1f)]
+        [SerializeField] private float planetOrbitGravityScaleRate = 0.3f;
+        [Min(0f)]
+        [SerializeField] private float planetOrbitInertiaDamping = 8f;
 
         [SerializeField] private Vector2 groundCheckOffset;
         [SerializeField] private LayerMask groundLayer;
@@ -24,6 +28,8 @@ namespace Orbit.Player
         public float PlanetAttractInitialImpulse => planetAttractInitialImpulse;
         public float PlanetAttractForce => planetAttractForce;
         public float PlanetAttractMaxSpeed => planetAttractMaxSpeed;
+        public float PlanetOrbitGravityScaleRate => planetOrbitGravityScaleRate;
+        public float PlanetOrbitInertiaDamping => planetOrbitInertiaDamping;
         public Vector2 GroundCheckOffset => groundCheckOffset;
         public LayerMask GroundLayer => groundLayer;
         public float GroundCheckRadius => groundCheckRadius;

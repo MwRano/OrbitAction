@@ -41,6 +41,7 @@ namespace Orbit.Game
             builder.RegisterEntryPoint<PlayerEffector>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerDeathPresenter>(Lifetime.Scoped);
             builder.RegisterEntryPoint<PlayerPlanetAttractor>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<PlayerOrbitAssist>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<PlayerCore>();
             builder.Register<PlayerMover>(Lifetime.Scoped);
             builder.Register<PlayerRespawner>(Lifetime.Scoped);

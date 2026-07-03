@@ -17,6 +17,8 @@ MonoBehaviour:
   planetAttractInitialImpulse: 30
   planetAttractForce: 1
   planetAttractMaxSpeed: 18
+  planetOrbitGravityScaleRate: 0.3
+  planetOrbitInertiaDamping: 8
   groundCheckOffset: {x: 0, y: -1}
   groundLayer:
     serializedVersion: 2
